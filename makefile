@@ -43,8 +43,8 @@ $(BIN_DIR)hexibit_app: $(BUILD_DIR)Config.o $(BUILD_DIR)Buffer.o $(BUILD_DIR)hex
 $(BUILD_DIR)hexibit_main.o: $(SRC_DIR)hexibit_main.cpp
 	$(call compilef, hexibit_main)
 
-$(BUILD_DIR)Config.o: $(call depends_on, config/Config)
-	$(call compilef, Config, config)
+$(BUILD_DIR)Config.o: $(call depends_on, Config)
+	$(call compilef, config)
 
 $(BUILD_DIR)Buffer.o: $(call depends_on, Buffer)
 	$(call compilef, buffer)
