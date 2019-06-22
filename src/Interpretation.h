@@ -13,8 +13,9 @@ enum class Interpretation {
   INT64,
   DOUBLE,
   BOOL,
-  IP,
-  STRING,
+  IPV4,
+  STRING, //null terminated
+  CHAR_ARRAY, //must be provided with a length
   SKIPPED // used to skip data between 2 interpretations
 
   // Any other interesting types?

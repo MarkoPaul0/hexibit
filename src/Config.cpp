@@ -56,7 +56,7 @@ static const char* interpretationToCstr(Interpretation itp) {
     case Interpretation::DOUBLE:    return "DOUBLE";
     case Interpretation::BOOL:      return "BOOL";
     case Interpretation::STRING:    return "STRING";
-    case Interpretation::IP:        return "IP";
+    case Interpretation::IPV4:      return "IPV4";
     case Interpretation::SKIPPED:   return "SKIPPED";
     default:                        _DEATH("Unknown intepretation"); //Add %d
   }
@@ -82,6 +82,14 @@ static bool strToInterpretation(const std::string& interpretation_str, Interpret
     *interpretation_out = Interpretation::INT32;
   } else if (up_str == "INT64") {
     *interpretation_out = Interpretation::INT64;
+  } else if (up_str == "DOUBLE") {
+    *interpretation_out = Interpretation::DOUBLE;
+  } else if (up_str == "BOOL") {
+    *interpretation_out = Interpretation::BOOL;
+  } else if (up_str == "STRING") {
+    *interpretation_out = Interpretation::STRING;
+  } else if (up_str == "IPV4") {
+    *interpretation_out = Interpretation::IPV4;
   } else {
     valid = false;
   }
@@ -105,11 +113,17 @@ static bool cstrToInterpretations(const char* interpretations_str, std::vector<I
   const char* p = interpretations_str;
   const char* cur_str = p;
   size_t cur_len = 0;
+
+  //TODO: refactor this method
+
   while (true) {
     cur_len++;
     if (*p == ',' || *p == '\0') {
       const std::string str(cur_str, cur_len - 1);
       cur_len = 0;
+      if (*p == ',') {
+        cur_str = p + 1;
+      }
       Interpretation interp;
       if (!strToInterpretation(str, &interp)) {
         _DEATH("Invalid interpretation '%s'", str.c_str());
@@ -155,7 +169,7 @@ Config::Config(int argc, char* argv[]) {
     switch (c)
     {
     case 's': {  // Hexadecimal string
-      hex_str_ = std::string(optarg);
+      hex_string_ = std::string(optarg);
       break;
     }
     case 'f': {  // Filepath
@@ -167,7 +181,10 @@ Config::Config(int argc, char* argv[]) {
       break;
     }
     case 'p': {
-      _DEATH("'--padding is not supported yet'");
+      padding_ = cstrToUInt64(optarg);
+      if (padding_ != 0 && padding_ != 2 && padding_ != 4 && padding_ != 8) {
+        _DEATH("'--padding' value must be one of 0, 2, 4, or 8!");
+      }
       break;
     }
     case 'b': {
@@ -181,10 +198,6 @@ Config::Config(int argc, char* argv[]) {
     }
     case 'o': {
       offset_ = cstrToUInt64(optarg);
-      break;
-    }
-    case 'n': {
-      num_bytes_ = cstrToUInt64(optarg);
       break;
     }
     default:
@@ -220,10 +233,10 @@ void Config::print() const {
   printf("Configuration: hex-string: %s\n"
          "               filepath: %s\n"
          "               byte-order: %s\n"
+         "               padding: %lu\n"
          "               interpretations: %s\n"
-         "               offset: %lu\n"
-         "               num-bytes: %lu\n",
-         hex_str_.c_str(), filepath_.c_str(), byteOrderToCstr(byte_order_), interpretations_str.c_str(), offset_, num_bytes_);
+         "               offset: %lu\n",
+         hex_string_.c_str(), filepath_.c_str(), byteOrderToCstr(byte_order_), padding_, interpretations_str.c_str(), offset_);
   printf("----------------------------------------------------\n");
 }
 
