@@ -8,7 +8,7 @@ namespace hx {
 
 class Buffer {
 public:
-  Buffer(ByteOrder byte_order);
+  Buffer(ByteOrder::Enum byte_order);
 
   ~Buffer();
 
@@ -34,7 +34,7 @@ public:
   std::string getIPv4String() const;
 
 private:
-  const ByteOrder   byte_order_;
+  const ByteOrder::Enum   byte_order_;
   const bool        swap_byte_order_;
   char*             data_;
   size_t            len_;

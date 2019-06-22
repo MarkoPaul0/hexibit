@@ -20,83 +20,6 @@ static std::string toUpper(const std::string& str) {
 }
 
 
-static bool cstrToByteOrder(const char* byte_order_str, ByteOrder* byte_order_out) {
-  const std::string bo(byte_order_str);
-  const std::string upper_bo = toUpper(bo);
-
-  bool valid = true;
-  if (upper_bo == "LE" || bo == "LITTLE_ENDIAN")
-    *byte_order_out = ByteOrder::LE;
-  else if (upper_bo == "BE" || bo == "LITTLE_ENDIAN")
-    *byte_order_out = ByteOrder::BE;
-  else
-    valid = false;
-
-  return valid;
-}
-
-static const char* byteOrderToCstr(ByteOrder bo) {
-  switch(bo) {
-    case ByteOrder::LE: return "LITTLE_ENDIAN";
-    case ByteOrder::BE: return "BIG_ENDIAN";
-    default:            _DEATH("Unknown byte order"); //Add %d
-  }
-}
-
-static const char* interpretationToCstr(Interpretation itp) {
-  switch (itp) {
-    case Interpretation::UINT8:     return "UINT8";
-    case Interpretation::UINT16:    return "UINT16";
-    case Interpretation::UINT32:    return "UINT32";
-    case Interpretation::UINT64:    return "UINT64";
-    case Interpretation::INT8:      return "INT8";
-    case Interpretation::INT16:     return "INT16";
-    case Interpretation::INT32:     return "INT32";
-    case Interpretation::INT64:     return "INT64";
-    case Interpretation::DOUBLE:    return "DOUBLE";
-    case Interpretation::BOOL:      return "BOOL";
-    case Interpretation::STRING:    return "STRING";
-    case Interpretation::IPV4:      return "IPV4";
-    case Interpretation::SKIPPED:   return "SKIPPED";
-    default:                        _DEATH("Unknown intepretation"); //Add %d
-  }
-}
-
-
-static bool strToInterpretation(const std::string& interpretation_str, Interpretation* interpretation_out) {
-  std::string up_str = toUpper(interpretation_str);
-  bool valid = true;
-  if (up_str == "UINT8") {
-    *interpretation_out = Interpretation::UINT8;
-  } else if (up_str == "UINT16") {
-    *interpretation_out = Interpretation::UINT16;
-  } else if (up_str == "UINT32") {
-    *interpretation_out = Interpretation::UINT32;
-  } else if (up_str == "UINT64") {
-    *interpretation_out = Interpretation::UINT64;
-  } else if (up_str == "INT8") {
-    *interpretation_out = Interpretation::INT8;
-  } else if (up_str == "INT16") {
-    *interpretation_out = Interpretation::INT16;
-  } else if (up_str == "INT32") {
-    *interpretation_out = Interpretation::INT32;
-  } else if (up_str == "INT64") {
-    *interpretation_out = Interpretation::INT64;
-  } else if (up_str == "DOUBLE") {
-    *interpretation_out = Interpretation::DOUBLE;
-  } else if (up_str == "BOOL") {
-    *interpretation_out = Interpretation::BOOL;
-  } else if (up_str == "STRING") {
-    *interpretation_out = Interpretation::STRING;
-  } else if (up_str == "IPV4") {
-    *interpretation_out = Interpretation::IPV4;
-  } else {
-    valid = false;
-  }
-
-  return valid;
-}
-
 uint64_t cstrToUInt64(const char* str) {
   char* endptr;
   errno = 0;
@@ -119,13 +42,14 @@ static bool cstrToInterpretations(const char* interpretations_str, std::vector<I
   while (true) {
     cur_len++;
     if (*p == ',' || *p == '\0') {
-      const std::string str(cur_str, cur_len - 1);
+      std::string str(cur_str, cur_len - 1);
+      str = toUpper(str);
       cur_len = 0;
       if (*p == ',') {
         cur_str = p + 1;
       }
       Interpretation interp;
-      if (!strToInterpretation(str, &interp)) {
+      if (!Interpretation::strToInterpretation(str, &interp)) {
         _DEATH("Invalid interpretation '%s'", str.c_str());
       }
 
@@ -188,7 +112,8 @@ Config::Config(int argc, char* argv[]) {
       break;
     }
     case 'b': {
-      if (!cstrToByteOrder(optarg, &byte_order_))
+      std::string arg = toUpper(optarg);
+      if (!ByteOrder::cstrToByteOrder(arg.c_str(), &byte_order_))
         _DEATH("Unknown byte order %s. Expecting one of {'LE', 'LITTLE_ENDIAN', 'BE', 'BIG_ENDIAN'} (not case sensitive)", optarg);
       break;
     }
@@ -225,7 +150,7 @@ void Config::print() const {
       if (!interpretations_str.empty())
         interpretations_str += ",";
 
-      interpretations_str += interpretationToCstr(ipt);
+      interpretations_str += Interpretation::interpretationToCstr(ipt);
     }
   }
 
@@ -236,7 +161,7 @@ void Config::print() const {
          "               padding: %lu\n"
          "               interpretations: %s\n"
          "               offset: %lu\n",
-         hex_string_.c_str(), filepath_.c_str(), byteOrderToCstr(byte_order_), padding_, interpretations_str.c_str(), offset_);
+         hex_string_.c_str(), filepath_.c_str(), ByteOrder::byteOrderToCstr(byte_order_), padding_, interpretations_str.c_str(), offset_);
   printf("----------------------------------------------------\n");
 }
 

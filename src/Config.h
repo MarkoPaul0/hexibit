@@ -28,13 +28,12 @@ public: //---------------- Public interface -------------------
   std::string                   hex_string_;
   std::string                   filepath_;   //TODO: ensure that hex_string_ and filepath_ are mutually exclusive
 
-  // Data target
+  // Offset when looking at a file
   size_t                        offset_;
-  //size_t                        num_bytes_;
 
   // Translation options
   size_t                        padding_;
-  ByteOrder                     byte_order_;
+  ByteOrder::Enum               byte_order_;
   std::vector<Interpretation>   interpretations_;
   bool                          interpret_all_;
 };

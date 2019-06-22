@@ -23,13 +23,13 @@ static uint64_t swapByteOrder64(const uint64_t& input) {
 
 static int parseByteHalf(const char* p) {
   if (*p >= 'A') { // ABCDEF
-    return static_cast<int>(*p - 'A');
+    return static_cast<int>(*p - 'A') + 10;
   } else { // 0123456789
     return static_cast<int>(*p - '0');
   }
 }
 
-static bool isByteOrderSwappingNeeded(ByteOrder bo) {
+static bool isByteOrderSwappingNeeded(ByteOrder::Enum bo) {
   union {
     uint16_t  value_;   // 16 bit unsigned integer
     char      mem_[2];  // underlying memory
@@ -37,13 +37,13 @@ static bool isByteOrderSwappingNeeded(ByteOrder bo) {
 
   uint16.value_ = 0x0102;
   const bool is_host_big_endian = (uint16.mem_[0] == 0x01);
-  const bool is_desired_order_big_endian = (bo == ByteOrder::BE);
+  const bool is_desired_order_big_endian = (bo == ByteOrder::Enum::BE);
 
   return (is_host_big_endian != is_desired_order_big_endian);
 }
 
 
-Buffer::Buffer(ByteOrder bo) : byte_order_(bo), swap_byte_order_(isByteOrderSwappingNeeded(bo)), data_(nullptr), len_(0) {
+Buffer::Buffer(ByteOrder::Enum bo) : byte_order_(bo), swap_byte_order_(isByteOrderSwappingNeeded(bo)), data_(nullptr), len_(0) {
 }
 
 
