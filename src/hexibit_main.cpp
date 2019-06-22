@@ -2,6 +2,7 @@
 #include "Buffer.h"
 #include "Config.h"
 #include "Interpreter.h"
+#include "ListPrinter.h"
 
 int main(int argc, char* argv[]) {
   // Parsing the configuration
@@ -18,9 +19,12 @@ int main(int argc, char* argv[]) {
     _DEATH("Invalid config");
   }
 
-  // Interpreting the data
+  // Creating the interpreter and the printer
   hx::Interpreter interpreter(&buffer, &cfg.interpretations_);
-  interpreter.performInterpretation();
+  hx::IConsolePrinter* printer = new hx::ListPrinter();
+
+  // Interpreting the data
+  interpreter.performInterpretation(printer);
 
   return 0;
 }

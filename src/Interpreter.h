@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Buffer.h"
+#include "IConsolePrinter.h"
 #include "Interpretation.h"
 
 namespace hx {
@@ -13,7 +14,7 @@ public:
   // Constructor
   Interpreter(Buffer* buffer, const std::vector<Interpretation>* interpretations);
 
-  void performInterpretation();
+  void performInterpretation(IConsolePrinter* printer);
 
 private:
   Buffer* const                         buffer_;

@@ -36,8 +36,8 @@ endef
 
 ##################### HEXIBIT APP ###################################################
 #Linking
-$(BIN_DIR)hexibit_app: $(BUILD_DIR)ByteOrder.o $(BUILD_DIR)Interpretation.o $(BUILD_DIR)Interpreter.o $(BUILD_DIR)Config.o $(BUILD_DIR)Buffer.o $(BUILD_DIR)hexibit_main.o
-	g++ $(BUILD_DIR)ByteOrder.o $(BUILD_DIR)Interpretation.o $(BUILD_DIR)Interpreter.o $(BUILD_DIR)Config.o $(BUILD_DIR)Buffer.o $(BUILD_DIR)hexibit_main.o -o $(BIN_DIR)hexibit_app
+$(BIN_DIR)hexibit_app: $(BUILD_DIR)ByteOrder.o $(BUILD_DIR)ListPrinter.o $(BUILD_DIR)Interpretation.o $(BUILD_DIR)Interpreter.o $(BUILD_DIR)Config.o $(BUILD_DIR)Buffer.o $(BUILD_DIR)hexibit_main.o
+	g++ $(BUILD_DIR)ByteOrder.o $(BUILD_DIR)ListPrinter.o $(BUILD_DIR)Interpretation.o $(BUILD_DIR)Interpreter.o $(BUILD_DIR)Config.o $(BUILD_DIR)Buffer.o $(BUILD_DIR)hexibit_main.o -o $(BIN_DIR)hexibit_app
 
 #Compiling
 $(BUILD_DIR)hexibit_main.o: $(SRC_DIR)hexibit_main.cpp
@@ -54,6 +54,9 @@ $(BUILD_DIR)Interpretation.o: $(call depends_on, Interpretation)
 
 $(BUILD_DIR)Interpreter.o: $(call depends_on, Interpreter)
 	$(call compilef, interpreter)
+
+$(BUILD_DIR)ListPrinter.o: $(call depends_on, ListPrinter)
+	$(call compilef, listprinter)
 
 $(BUILD_DIR)ByteOrder.o: $(call depends_on, ByteOrder)
 	$(call compilef, byteorder)
