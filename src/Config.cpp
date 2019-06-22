@@ -162,7 +162,7 @@ void Config::print() const {
          "               interpretations: %s\n"
          "               offset: %lu\n",
          hex_string_.c_str(), filepath_.c_str(), ByteOrder::byteOrderToCstr(byte_order_), padding_, interpretations_str.c_str(), offset_);
-  printf("----------------------------------------------------\n");
+  printf("----------------------------------------------------\n\n");
 }
 
 } //namespace scx

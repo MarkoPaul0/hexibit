@@ -19,6 +19,19 @@ public:
 
   size_t getRemainingLength() const;
 
+  std::string getDataAsHexString(size_t num_bytes) {
+    if (num_bytes > getRemainingLength())
+      _DEATH("Not enough data available");
+
+    const size_t str_len = 2*num_bytes;
+    char* str_buf = new char[str_len];
+    for(size_t i = 0; i < num_bytes; ++i)
+      sprintf(&str_buf[2*i], "%02X", data_[offset_ + i]);
+
+    std::string str(str_buf, str_len);
+    return str;
+  }
+
   uint64_t getUInt64() const;
   uint32_t getUInt32() const;
   uint16_t getUInt16() const;

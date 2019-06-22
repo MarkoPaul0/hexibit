@@ -21,12 +21,19 @@ static uint64_t swapByteOrder64(const uint64_t& input) {
 }
 
 
-static int parseByteHalf(const char* p) {
-  if (*p >= 'A') { // ABCDEF
-    return static_cast<int>(*p - 'A') + 10;
-  } else { // 0123456789
-    return static_cast<int>(*p - '0');
-  }
+
+static int parseHexCharacter(char c) {
+  int value = 0;
+  const char hex_char = static_cast<char>(toupper(c));
+  if (hex_char >= 'A')// ABCDEF
+    value = static_cast<int>(hex_char - 'A') + 10;
+  else // 0123456789
+    value = static_cast<int>(hex_char - '0');
+
+  if (value < 0 || value > 15)
+    _DEATH("Invalid hexadecimal character '%c'", c);
+
+  return value;
 }
 
 static bool isByteOrderSwappingNeeded(ByteOrder::Enum bo) {
@@ -59,8 +66,9 @@ void Buffer::initFromHexString(const std::string& hex_str) {
   data_ = new char[len_];
   char* p_out = data_;
   for (size_t i = 0; i < len_; ++i) {
-    const int high_half = parseByteHalf(p_in++);
-    const int low_half = parseByteHalf(p_in++);
+    const int high_half = parseHexCharacter(*p_in);
+    const int low_half = parseHexCharacter(*(p_in + 1));
+    p_in += 2;
     *p_out = static_cast<char>(high_half*16 + low_half);
     ++p_out;
   }

@@ -8,12 +8,13 @@ bool ByteOrder::cstrToByteOrder(const char* byte_order_str, Enum* byte_order_out
   const std::string bo(byte_order_str);
 
   bool valid = true;
-  if (bo == "LE" || bo == "LITTLE_ENDIAN")
+  if (bo == "LE" || bo == "LITTLE_ENDIAN") {
     *byte_order_out = Enum::LE;
-  else if (bo == "BE" || bo == "BIG_ENDIAN")
+  } else if (bo == "BE" || bo == "BIG_ENDIAN") {
     *byte_order_out = Enum::BE;
-  else
+  } else {
     valid = false;
+  }
 
   return valid;
 }
