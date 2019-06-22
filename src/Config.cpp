@@ -2,6 +2,8 @@
 #include <getopt.h>
 #include <stdexcept>
 #include <cstring>
+#include <set>
+#include <errno.h>
 #include "UtilDefs.h"
 
 namespace hx {
@@ -66,6 +68,20 @@ static bool strToInterpretation(const std::string& interpretation_str, Interpret
   bool valid = true;
   if (up_str == "UINT8") {
     *interpretation_out = Interpretation::UINT8;
+  } else if (up_str == "UINT16") {
+    *interpretation_out = Interpretation::UINT16;
+  } else if (up_str == "UINT32") {
+    *interpretation_out = Interpretation::UINT32;
+  } else if (up_str == "UINT64") {
+    *interpretation_out = Interpretation::UINT64;
+  } else if (up_str == "INT8") {
+    *interpretation_out = Interpretation::INT8;
+  } else if (up_str == "INT16") {
+    *interpretation_out = Interpretation::INT16;
+  } else if (up_str == "INT32") {
+    *interpretation_out = Interpretation::INT32;
+  } else if (up_str == "INT64") {
+    *interpretation_out = Interpretation::INT64;
   } else {
     valid = false;
   }
@@ -73,30 +89,45 @@ static bool strToInterpretation(const std::string& interpretation_str, Interpret
   return valid;
 }
 
+uint64_t cstrToUInt64(const char* str) {
+  char* endptr;
+  errno = 0;
+  unsigned long long val = strtoull(str, &endptr, /*base*/10);
+  if (errno != 0 || endptr == str || *endptr != '\0') { //TODO: verify these conditions
+    _DEATH("Expected uint64, got %s", str);
+  }
+  return static_cast<uint64_t>(val);
+}
+
 
 static bool cstrToInterpretations(const char* interpretations_str, std::vector<Interpretation>* interpretations_out) {
+  //_INFO("Trying to translate %s", interpretations_str);
   const char* p = interpretations_str;
   const char* cur_str = p;
   size_t cur_len = 0;
-  do {
+  while (true) {
     cur_len++;
     if (*p == ',' || *p == '\0') {
-      const std::string str(cur_str, cur_len);
+      const std::string str(cur_str, cur_len - 1);
+      cur_len = 0;
       Interpretation interp;
-      if (!strToInterpretation(str, &interp))
-        _DEATH("Invalid interpretation %s", str.c_str());
+      if (!strToInterpretation(str, &interp)) {
+        _DEATH("Invalid interpretation '%s'", str.c_str());
+      }
 
       interpretations_out->push_back(interp);
     }
-  } while (*p != '\0');
+    if (*p == '\0')
+      break;
+    ++p;
+  }
 
   return true; //TODO: useless?
 }
 
 
 Config::Config(int argc, char* argv[]) {
-  const size_t opt_size = 8;
-  static option long_options[opt_size] = {
+  static option long_options[] = {
     {"hex-string",          required_argument, 0, 's'},
     {"file",                required_argument, 0, 'f'},
     {"reinterpret-as",      required_argument, 0, 'r'},
@@ -107,28 +138,28 @@ Config::Config(int argc, char* argv[]) {
     {"num-bytes",           required_argument, 0, 'n'}
   };
 
-  bool opt_seen[opt_size] = {false, false, false, false, false, false, false, false};
   int c = 0;
+  std::set<int> opt_seen;
   while (c >= 0) {
     int opt_index = 0;
-    if ((c = getopt_long_only(argc, argv, "s:f:r:p:b:a:o:n:", long_options, &opt_index)) < 0) {
+    if ((c = getopt_long_only(argc, argv, "s:f:r:p:b:ao:n:", long_options, &opt_index)) < 0) {
       break;//end of options;
+    } else if (c == '?' || c == ':') {
+      _DEATH("Invalid arguments");
     }
-    if (opt_seen[opt_index]) {
+
+    if (!opt_seen.insert(c).second) {
       _DEATH("Option %s is provided twice!", optarg);
     }
-    opt_seen[opt_index] = true;
 
     switch (c)
     {
     case 's': {  // Hexadecimal string
       hex_str_ = std::string(optarg);
-      //ASSERT(!hex_str.empty());
       break;
     }
     case 'f': {  // Filepath
       filepath_ = std::string(optarg);
-      //ASSERT(!filepath_.empty());
       break;
     }
     case 'r': {
@@ -145,12 +176,15 @@ Config::Config(int argc, char* argv[]) {
       break;
     }
     case 'a': {
+      interpret_all_ = true;
       break;
     }
     case 'o': {
+      offset_ = cstrToUInt64(optarg);
       break;
     }
     case 'n': {
+      num_bytes_ = cstrToUInt64(optarg);
       break;
     }
     default:
@@ -160,9 +194,6 @@ Config::Config(int argc, char* argv[]) {
 
   //If there are unknown options
   if (optind < argc) {
-    while (optind < argc)
-      _ERROR("[Config] unkown argument %s", argv[optind++]);
-
     _DEATH("[Config] Invalid input");
   }
 
@@ -174,18 +205,26 @@ Config::Config(int argc, char* argv[]) {
 
 void Config::print() const {
   std::string interpretations_str;
-  for (Interpretation ipt: interpretations_) {
-    if (!interpretations_str.empty())
-      interpretations_str += ",";
+  if (interpret_all_) {
+    interpretations_str = "All";
+  } else {
+    for (Interpretation ipt: interpretations_) {
+      if (!interpretations_str.empty())
+        interpretations_str += ",";
 
-    interpretations_str += interpretationToCstr(ipt);
+      interpretations_str += interpretationToCstr(ipt);
+    }
   }
 
-  _INFO("Configuration: \n"
-        "\t hex-string: %s"
-        "\t filepath: %s"
-        "\t byte-order: %s"
-        "\t interpretations: %s", hex_str_.c_str(), filepath_.c_str(), byteOrderToCstr(byte_order_), interpretations_str.c_str());
+  printf("----------------------------------------------------\n");
+  printf("Configuration: hex-string: %s\n"
+         "               filepath: %s\n"
+         "               byte-order: %s\n"
+         "               interpretations: %s\n"
+         "               offset: %lu\n"
+         "               num-bytes: %lu\n",
+         hex_str_.c_str(), filepath_.c_str(), byteOrderToCstr(byte_order_), interpretations_str.c_str(), offset_, num_bytes_);
+  printf("----------------------------------------------------\n");
 }
 
 } //namespace scx

@@ -44,10 +44,18 @@ private: //---------------- Private interface -------------------
   Config(const Config&)           = delete;
   Config& operator=(const Config) = delete;
 
+  // Input data
   std::string                   hex_str_;
   std::string                   filepath_;   //TODO: ensure that hex_str_ and filepath_ are mutually exclusive
+
+  // Data target
+  size_t                        offset_;
+  size_t                        num_bytes_;
+
+  // Translation options
   ByteOrder                     byte_order_;
   std::vector<Interpretation>   interpretations_;
+  bool                          interpret_all_;
 };
 
 }; //namespace scx
