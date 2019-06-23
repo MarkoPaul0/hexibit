@@ -2,8 +2,8 @@
 
 #include <string>
 
-#include "Interpretation.h"
-#include "IConsolePrinter.h"
+#include "parse/Interpretation.h"
+#include "print/IConsolePrinter.h"
 
 namespace hx {
 

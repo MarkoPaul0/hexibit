@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "ByteOrder.h"
+#include "data/ByteOrder.h"
 
 namespace hx {
 

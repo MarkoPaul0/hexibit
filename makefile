@@ -8,7 +8,7 @@ UNIT_TESTS ?= no
 BUILD_MODE ?= normal
 
 ifeq ($(BUILD_MODE), dbg)
-CPPFLAGS+=-DDBG
+CPPFLAGS+=-DDBG -g
 BUILD_DIR=build-dbg/
 endif
 
@@ -43,20 +43,21 @@ $(BIN_DIR)hexibit_app: $(BUILD_DIR)ByteOrder.o $(BUILD_DIR)ListPrinter.o $(BUILD
 $(BUILD_DIR)hexibit_main.o: $(SRC_DIR)hexibit_main.cpp
 	$(call compilef, hexibit_main)
 
-$(BUILD_DIR)Config.o: $(call depends_on, Config)
-	$(call compilef, config)
+$(BUILD_DIR)Config.o: $(call depends_on, config/Config)
+	$(call compilef, Config, config)
 
-$(BUILD_DIR)Buffer.o: $(call depends_on, Buffer)
-	$(call compilef, buffer)
+$(BUILD_DIR)Buffer.o: $(call depends_on, data/Buffer)
+	$(call compilef, Buffer, data)
 
-$(BUILD_DIR)Interpretation.o: $(call depends_on, Interpretation)
-	$(call compilef, interpretation)
+$(BUILD_DIR)ByteOrder.o: $(call depends_on, data/ByteOrder)
+	$(call compilef, ByteOrder, data)
 
-$(BUILD_DIR)Interpreter.o: $(call depends_on, Interpreter)
-	$(call compilef, interpreter)
+$(BUILD_DIR)Interpretation.o: $(call depends_on, parse/Interpretation)
+	$(call compilef, Interpretation, parse)
 
-$(BUILD_DIR)ListPrinter.o: $(call depends_on, ListPrinter)
-	$(call compilef, listprinter)
+$(BUILD_DIR)Interpreter.o: $(call depends_on, parse/Interpreter)
+	$(call compilef, Interpreter, parse)
 
-$(BUILD_DIR)ByteOrder.o: $(call depends_on, ByteOrder)
-	$(call compilef, byteorder)
+$(BUILD_DIR)ListPrinter.o: $(call depends_on, print/ListPrinter)
+	$(call compilef, ListPrinter, print)
+

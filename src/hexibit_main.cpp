@@ -1,8 +1,8 @@
 #include "UtilDefs.h"
-#include "Buffer.h"
-#include "Config.h"
-#include "Interpreter.h"
-#include "ListPrinter.h"
+#include "data/Buffer.h"
+#include "config/Config.h"
+#include "parse/Interpreter.h"
+#include "print/ListPrinter.h"
 
 int main(int argc, char* argv[]) {
   // Parsing the configuration

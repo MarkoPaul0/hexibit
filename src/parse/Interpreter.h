@@ -2,9 +2,9 @@
 
 #include <vector>
 
-#include "Buffer.h"
-#include "IConsolePrinter.h"
-#include "Interpretation.h"
+#include "data/Buffer.h"
+#include "print/IConsolePrinter.h"
+#include "parse/Interpretation.h"
 
 namespace hx {
 

@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 
-#include "ByteOrder.h"
-#include "Interpretation.h"
+#include "data/ByteOrder.h"
+#include "parse/Interpretation.h"
 
 /*
    This class is merely a config parser and holder. It is constructed using

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "Interpretation.h"
+#include "parse/Interpretation.h"
 
 namespace hx {
 

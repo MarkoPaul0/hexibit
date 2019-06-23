@@ -1,4 +1,4 @@
-#include "Interpreter.h"
+#include "parse/Interpreter.h"
 
 namespace hx {
 
