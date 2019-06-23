@@ -17,11 +17,12 @@ struct Interpretation {
     DOUBLE,
     BOOL,
     IPV4,
-    STRING, //null terminated
-    CHAR_ARRAY, //must be provided with a length
-    SKIPPED // used to skip data between 2 interpretations
+    //TODO: merge string and char_array
+    STRING,     // Null terminated
+    CHAR_ARRAY, // Must be provided with a length, e.g. "CHAR_ARRAY_3" for 3 characters
+    SKIPPED     // Used to skip data between 2 interpretations. Must be provided with a length
 
-    // Any other interesting types?
+    // TODO: Any other interesting types?
   };
 
   Type    type_;

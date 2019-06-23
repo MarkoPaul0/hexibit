@@ -10,17 +10,14 @@ namespace hx {
 
 class Interpreter {
 public:
-
   // Constructor
   Interpreter(Buffer* buffer, const std::vector<Interpretation>* interpretations);
 
   void performInterpretation(IConsolePrinter* printer);
 
 private:
-  Buffer* const                         buffer_;
+  Buffer* const                               buffer_;
   const std::vector<Interpretation>* const    interpretations_;
-
 };
-
 
 } // namespace hx

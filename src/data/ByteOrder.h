@@ -1,13 +1,11 @@
 #pragma once
 
-#include "UtilDefs.h"
-
 namespace hx {
 
 struct ByteOrder {
   enum Enum {
-    BE,
-    LE
+    BE, // Big endian (network byte order)
+    LE  // Little endian
   };
 
   static bool cstrToByteOrder(const char* byte_order_str, Enum* byte_order_out);

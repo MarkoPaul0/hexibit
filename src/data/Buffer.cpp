@@ -1,6 +1,6 @@
 #include "data/Buffer.h"
 
-#include "UtilDefs.h"
+#include "MainUtils.h"
 
 namespace hx {
 
@@ -93,7 +93,7 @@ size_t Buffer::getRemainingLength() const {
 
 
 const char* Buffer::getData() const {
-  return data_;
+  return data_ + offset_;
 }
 
 

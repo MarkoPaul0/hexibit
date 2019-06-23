@@ -1,6 +1,7 @@
-#include "UtilDefs.h"
-#include "data/Buffer.h"
+#include "MainUtils.h"
+
 #include "config/Config.h"
+#include "data/Buffer.h"
 #include "parse/Interpreter.h"
 #include "print/ListPrinter.h"
 
@@ -8,6 +9,7 @@ int main(int argc, char* argv[]) {
   // Parsing the configuration
   const hx::Config cfg(argc, argv);
   cfg.print();
+  //TODO: validate and print usage if invalid
 
   // Creating the buffer holding the data to interpret
   hx::Buffer buffer(cfg.byte_order_);
@@ -26,5 +28,6 @@ int main(int argc, char* argv[]) {
   // Interpreting the data
   interpreter.performInterpretation(printer);
 
+  delete printer;
   return 0;
 }

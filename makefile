@@ -22,7 +22,7 @@ clean:
 	$(RM) -rf $(BIN_DIR) $(BUILD_DIR)
 
 define depends_on 
-    $(addsuffix .h, $(addprefix $(SRC_DIR), $(1))) $(addsuffix .cpp, $(addprefix $(SRC_DIR), $(1))) $(SRC_DIR)/UtilDefs.h
+    $(addsuffix .h, $(addprefix $(SRC_DIR), $(1))) $(addsuffix .cpp, $(addprefix $(SRC_DIR), $(1))) $(SRC_DIR)/MainUtils.h
 endef
 
 #define compile $(addsuffix .h, $(addprefix $(SRC_DIR), $(1))) $(addsuffix .cpp, $(addprefix $(SRC_DIR), $(1))) 

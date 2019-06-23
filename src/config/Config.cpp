@@ -1,10 +1,11 @@
 #include "config/Config.h"
+
 #include <getopt.h>
-#include <stdexcept>
 #include <cstring>
-#include <set>
 #include <errno.h>
-#include "UtilDefs.h"
+#include <set>
+
+#include "MainUtils.h"
 
 namespace hx {
 

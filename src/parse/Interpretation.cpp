@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <errno.h>
 
-#include "UtilDefs.h"
+#include "MainUtils.h"
 
 namespace hx {
 

@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "MainUtils.h"
+
 namespace hx {
 
 bool ByteOrder::cstrToByteOrder(const char* byte_order_str, Enum* byte_order_out) {
