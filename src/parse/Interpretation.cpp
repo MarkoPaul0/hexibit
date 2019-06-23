@@ -1,6 +1,7 @@
 #include "parse/Interpretation.h"
 
 #include <cstdint>
+#include <errno.h>
 
 #include "UtilDefs.h"
 
@@ -25,7 +26,8 @@ const char* Interpretation::interpretationToCstr(Interpretation itp) {
     case Interpretation::BOOL:      return "BOOL";
     case Interpretation::STRING:    return "STRING";
     case Interpretation::IPV4:      return "IPV4";
-    case Interpretation::SKIPPED:   return "SKIPPED";
+    case Interpretation::SKIPPED:    return "SKIPPED";
+    case Interpretation::CHAR_ARRAY: return "CHAR_ARRAY";
     default:                        _DEATH("Unknown intepretation"); //Add %d
   }
 }
@@ -33,6 +35,7 @@ const char* Interpretation::interpretationToCstr(Interpretation itp) {
 
 bool Interpretation::strToInterpretation(const std::string& interpretation_str, Interpretation* interpretation_out) {
   bool valid = true;
+
   if (interpretation_str == "UINT8") {
     interpretation_out->type_ = Interpretation::UINT8;
     interpretation_out->size_ = sizeof(uint8_t);
@@ -66,6 +69,15 @@ bool Interpretation::strToInterpretation(const std::string& interpretation_str, 
   } else if (interpretation_str == "STRING") {
     interpretation_out->type_ = Interpretation::STRING;
     interpretation_out->size_ = 0; // The string is null terminated
+  } else if (interpretation_str.size() > 11 && interpretation_str.substr(0,11) == "CHAR_ARRAY_") {
+    std::string len_str = interpretation_str.substr(11);
+    char* endptr;
+    errno = 0;
+    unsigned long len = strtoul(len_str.c_str(), &endptr, /*base*/10);
+    if (errno != 0 || len_str.c_str() == endptr)
+      _DEATH("Malformated interpretation %s", interpretation_str.c_str());
+    interpretation_out->type_ = Interpretation::CHAR_ARRAY;
+    interpretation_out->size_ = static_cast<size_t>(len);
   } else if (interpretation_str == "IPV4") {
     interpretation_out->type_ = Interpretation::IPV4;
     interpretation_out->size_ = 4;

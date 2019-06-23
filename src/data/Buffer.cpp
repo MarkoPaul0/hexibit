@@ -21,7 +21,6 @@ static uint64_t swapByteOrder64(const uint64_t& input) {
 }
 
 
-
 static int parseHexCharacter(char c) {
   int value = 0;
   const char hex_char = static_cast<char>(toupper(c));
@@ -35,6 +34,7 @@ static int parseHexCharacter(char c) {
 
   return value;
 }
+
 
 static bool isByteOrderSwappingNeeded(ByteOrder::Enum bo) {
   union {
@@ -89,6 +89,25 @@ void Buffer::advanceReadPtr(size_t advance_size) {
 size_t Buffer::getRemainingLength() const {
 //  ASSERT(len_ >= offset_);
   return len_ - offset_;
+}
+
+
+const char* Buffer::getData() const {
+  return data_;
+}
+
+
+std::string Buffer::getDataAsHexString(size_t num_bytes) const {
+  if (num_bytes > getRemainingLength())
+    _DEATH("Not enough data available");
+
+  const size_t str_len = 2*num_bytes;
+  char* str_buf = new char[str_len];
+  for(size_t i = 0; i < num_bytes; ++i)
+    sprintf(&str_buf[2*i], "%02X", data_[offset_ + i]);
+
+  std::string str(str_buf, str_len);
+  return str;
 }
 
 

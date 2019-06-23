@@ -57,12 +57,23 @@ void Interpreter::performInterpretation(IConsolePrinter* printer) {
         break;
       }
       case hx::Interpretation::STRING: {
+        const char* end_ptr = reinterpret_cast<const char*>(memchr(buffer_->getData(), '\0', buffer_->getRemainingLength()));
+        itp.size_ = static_cast<size_t>(end_ptr - buffer_->getData() + 1);
+        std::string str(buffer_->getData(), itp.size_);
+        printer->printInterpretation(buffer_->getDataAsHexString(itp.size_), itp, str);
+        break;
+      }
+      case hx::Interpretation::CHAR_ARRAY: {
+        std::string str(buffer_->getData(), itp.size_);
+        printer->printInterpretation(buffer_->getDataAsHexString(itp.size_), itp, str);
         break;
       }
       case hx::Interpretation::IPV4: {
+        _DEATH("IPV4 parsing is not available yet");
         break;
       }
       case hx::Interpretation::SKIPPED: {
+        _DEATH("Cannot skip data yet");
         break;
       }
       default: _DEATH("Unknown intepretation"); //Add %d
