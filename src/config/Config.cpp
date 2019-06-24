@@ -33,13 +33,11 @@ uint64_t cstrToUInt64(const char* str) {
 
 
 static bool cstrToInterpretations(const char* interpretations_str, std::vector<Interpretation>* interpretations_out) {
-  //_INFO("Trying to translate %s", interpretations_str);
   const char* p = interpretations_str;
   const char* cur_str = p;
   size_t cur_len = 0;
 
   //TODO: refactor this method
-
   while (true) {
     cur_len++;
     if (*p == ',' || *p == '\0') {
@@ -51,7 +49,8 @@ static bool cstrToInterpretations(const char* interpretations_str, std::vector<I
       }
       Interpretation interp;
       if (!Interpretation::strToInterpretation(str, &interp)) {
-        _DEATH("Invalid interpretation '%s'", str.c_str());
+        _ERROR("Invalid interpretation '%s'", str.c_str());
+        return false;
       }
 
       interpretations_out->push_back(interp);
@@ -61,18 +60,48 @@ static bool cstrToInterpretations(const char* interpretations_str, std::vector<I
     ++p;
   }
 
-  return true; //TODO: useless?
+  return true;
+}
+
+
+static void printUsage(const char* bin_path) {
+  printf("\n");
+  printf("Usage:\n");
+  printf("\t%s -s  <hex_string> [-i <interpretation,...> -p <padding> -b <byte_order>]\n", bin_path);
+  printf("\t%s -f  <filepath> [-i <interpretation,...> -p <padding> -b <byte_order> -o <offset> -n <num_bytes>]\n", bin_path);
+  printf("\n");
+  printf("Where:\n");
+  printf("\t<hex_string>     is a hexadecimal string (With or without whitespaces, not case sensitive)\n");
+  printf("\t<interpretation> is one of uint[8|16|32|64], int[8|16|32|64], double, ipv4, string, char_array, bool, skipped (Not case sensitive)\n");
+  printf("\t<padding>        is one of 0, 2, 4, or 8 (Defaulted to 0)\n");
+  printf("\t<byte_order>     is one of LITTLE_ENDIAN, BIG_ENDIAN, LE, or BE. (Not case sensitive, defaulted to BE)\n");
+  printf("\n");
+  printf("\n");
+  printf("All options have long name equivalents:\n");
+  printf("\t-s or --hex-string\n");
+  printf("\t-f or --filepath\n");
+  printf("\t-i or --interpretations\n");
+  printf("\t-p or --padding\n");
+  printf("\t-b or --byte-order\n");
+  printf("\t-o or --offset\n");
+  printf("\t-n or --num-bytes\n");
+  printf("\n");
+  printf("Examples:\n");
+  printf("\t%s -s  \"01 B2 Ff4c\" -i bool,uint8,int16\n", bin_path);
+  printf("\t%s -f  some/file/to_analyze.txt -o 128 -n 4 -i ipv4]\n", bin_path);
+  printf("\n");
+  // TODO: add examples with skipped, char_array
 }
 
 
 Config::Config(int argc, char* argv[]) {
   static option long_options[] = {
+    {"help",                no_argument,       0, 'h'},
     {"hex-string",          required_argument, 0, 's'},
-    {"file",                required_argument, 0, 'f'},
-    {"reinterpret-as",      required_argument, 0, 'r'},
+    {"filepath",            required_argument, 0, 'f'},
+    {"interpretations",     required_argument, 0, 'i'},
     {"padding",             required_argument, 0, 'p'},
     {"byte-order",          required_argument, 0, 'b'},
-    {"all-interpretations", no_argument,       0, 'a'},
     {"offset",              required_argument, 0, 'o'},
     {"num-bytes",           required_argument, 0, 'n'}
   };
@@ -81,10 +110,12 @@ Config::Config(int argc, char* argv[]) {
   std::set<int> opt_seen;
   while (c >= 0) {
     int opt_index = 0;
-    if ((c = getopt_long_only(argc, argv, "s:f:r:p:b:ao:n:", long_options, &opt_index)) < 0) {
-      break;//end of options;
+    if ((c = getopt_long_only(argc, argv, "hs:f:i:p:b:o:n:", long_options, &opt_index)) < 0) {
+      break; // End of options;
     } else if (c == '?' || c == ':') {
-      _DEATH("Invalid arguments");
+      _ERROR("Invalid arguments!");
+      printUsage(argv[0]);
+      exit(1);
     }
 
     if (!opt_seen.insert(c).second) {
@@ -93,33 +124,43 @@ Config::Config(int argc, char* argv[]) {
 
     switch (c)
     {
+    case 'h': {
+      printUsage(argv[0]);
+      exit(0);
+      break;
+    }
     case 's': {  // Hexadecimal string
       hex_string_ = std::string(optarg);
+      //TODO: validate that this is a proper hexa string
       break;
     }
     case 'f': {  // Filepath
       filepath_ = std::string(optarg);
       break;
     }
-    case 'r': {
-      cstrToInterpretations(optarg, &interpretations_);
+    case 'i': {
+      if (!cstrToInterpretations(optarg, &interpretations_)) {
+        printUsage(argv[0]);
+        exit(1);
+      }
       break;
     }
     case 'p': {
       padding_ = cstrToUInt64(optarg);
       if (padding_ != 0 && padding_ != 2 && padding_ != 4 && padding_ != 8) {
-        _DEATH("'--padding' value must be one of 0, 2, 4, or 8!");
+        _ERROR("'--padding' value must be one of 0, 2, 4, or 8!");
+        printUsage(argv[0]);
+        exit(1);
       }
       break;
     }
     case 'b': {
       std::string arg = toUpper(optarg);
-      if (!ByteOrder::cstrToByteOrder(arg.c_str(), &byte_order_))
-        _DEATH("Unknown byte order %s. Expecting one of {'LE', 'LITTLE_ENDIAN', 'BE', 'BIG_ENDIAN'} (not case sensitive)", optarg);
-      break;
-    }
-    case 'a': {
-      interpret_all_ = true;
+      if (!ByteOrder::cstrToByteOrder(arg.c_str(), &byte_order_)) {
+        _ERROR("Unknown byte order %s. Expecting one of {'LE', 'LITTLE_ENDIAN', 'BE', 'BIG_ENDIAN'} (not case sensitive)", optarg);
+        printUsage(argv[0]);
+        exit(1);
+      }
       break;
     }
     case 'o': {
@@ -131,20 +172,36 @@ Config::Config(int argc, char* argv[]) {
     }
   }
 
-  //If there are unknown options
+  // If there are unknown options
   if (optind < argc) {
     _DEATH("[Config] Invalid input");
   }
 
-  //for (size_t i = 0; i < opt_size; ++i) {
-  //  if (!opt_seen[i]) {
-  //    _DEATH("[Config] missing argument '%s'!", long_options[i].name);
-  //}
+  if (!validate()) {
+    printUsage(argv[0]);
+    exit(1);
+  }
 };
+
+
+bool Config::validate() const {
+  if (hex_string_.empty() && filepath_.empty()) {
+    _ERROR("Missing argument!");
+    return false;
+  }
+
+  if (!hex_string_.empty() && !filepath_.empty()) {
+    _ERROR("'-s|--hex-string' and '-f|--filepath' are mutually exclusive options!");
+    return false;
+  }
+
+  return true;
+}
+
 
 void Config::print() const {
   std::string interpretations_str;
-  if (interpret_all_) {
+  if (interpretations_.empty()) {
     interpretations_str = "All";
   } else {
     for (Interpretation ipt: interpretations_) {

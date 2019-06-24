@@ -7,18 +7,21 @@
 #include "parse/Interpretation.h"
 
 /*
-   This class is merely a config parser and holder. It is constructed using
-   the command line arguments passed when running the binary. Any unexpected
-   value will cause the process to exit
+  This class is merely a config parser and holder. It is constructed using
+  the command line arguments passed when running the binary. Any unexpected
+  value will cause the process to print usage and exit.
 */
 namespace hx {
 
 class Config {
 public: //---------------- Public interface -------------------
-  //Config(); // Only here so that I can get unit test going fast
   Config(int argc, char* argv[]);
 
-  void print() const; // Prints the content of the config
+  // Print the content of the config
+  void print() const;
+
+  // Validate the config
+  bool validate() const;
 
   Config()                        = delete;
   Config(const Config&)           = delete;
@@ -36,7 +39,7 @@ public: //---------------- Public interface -------------------
   size_t                        padding_;             // How the data is padded (must be a power of 2) 0 means tightly packed. Tightly packed by default.
   ByteOrder::Enum               byte_order_;          // Endianness, big endian by default
   std::vector<Interpretation>   interpretations_;     // Vector of interpretations, determining how the input data should be interpreted
-  bool                          interpret_all_;       // If enabled, this will cause all possible viable interpretations to be performed on the starting bytes. Disabled by default.
+  // If empty, all compatible interpretations are tested on the first bytes of the data
 };
 
 }; //namespace scx
