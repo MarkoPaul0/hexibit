@@ -7,6 +7,20 @@
 
 namespace hx {
 
+static constexpr size_t CHAR_ARRAY_OFFSET = 11;
+static constexpr size_t SKIPPED_OFFSET    = 8;
+
+static size_t parseInterpretationLength(const std::string& interpretation_str, size_t offset) {
+  std::string len_str = interpretation_str.substr(offset);
+  char* endptr;
+  errno = 0;
+  unsigned long len = strtoul(len_str.c_str(), &endptr, /*base*/10);
+  if (errno != 0 || len_str.c_str() == endptr)
+    _DEATH("Malformated interpretation %s", interpretation_str.c_str());
+
+  return static_cast<size_t>(len);
+}
+
 
 Interpretation::Interpretation() : type_(UINT8), size_(0) {
 }
@@ -69,15 +83,16 @@ bool Interpretation::strToInterpretation(const std::string& interpretation_str, 
   } else if (interpretation_str == "STRING") {
     interpretation_out->type_ = Interpretation::STRING;
     interpretation_out->size_ = 0; // The string is null terminated
-  } else if (interpretation_str.size() > 11 && interpretation_str.substr(0,11) == "CHAR_ARRAY_") {
-    std::string len_str = interpretation_str.substr(11);
-    char* endptr;
-    errno = 0;
-    unsigned long len = strtoul(len_str.c_str(), &endptr, /*base*/10);
-    if (errno != 0 || len_str.c_str() == endptr)
-      _DEATH("Malformated interpretation %s", interpretation_str.c_str());
+  } else if (interpretation_str.size() > CHAR_ARRAY_OFFSET && interpretation_str.substr(0,CHAR_ARRAY_OFFSET) == "CHAR_ARRAY_") {
     interpretation_out->type_ = Interpretation::CHAR_ARRAY;
-    interpretation_out->size_ = static_cast<size_t>(len);
+    interpretation_out->size_ = parseInterpretationLength(interpretation_str, CHAR_ARRAY_OFFSET);
+    if (interpretation_out->size_ <= 0)
+      _DEATH("Interpretation '%s' cannot have a length of 0", interpretation_str.c_str());
+  } else if (interpretation_str.size() > SKIPPED_OFFSET && interpretation_str.substr(0,SKIPPED_OFFSET) == "SKIPPED_") {
+    interpretation_out->type_ = Interpretation::SKIPPED;
+    interpretation_out->size_ = parseInterpretationLength(interpretation_str, SKIPPED_OFFSET);
+    if (interpretation_out->size_ <= 0)
+      _DEATH("Interpretation '%s' cannot have a length of 0", interpretation_str.c_str());
   } else if (interpretation_str == "IPV4") {
     interpretation_out->type_ = Interpretation::IPV4;
     interpretation_out->size_ = 4;

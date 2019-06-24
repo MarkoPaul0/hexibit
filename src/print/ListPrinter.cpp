@@ -2,7 +2,7 @@
 
 namespace hx {
 
-static constexpr char PRINT_FORMAT[16] = "%-18s %-16s %s\n";
+static constexpr char PRINT_FORMAT[16] = "%-32s %-20s %s\n";
 
 
 void ListPrinter::printHeader() {

@@ -6,7 +6,7 @@ namespace hx {
 
 struct Interpretation {
   enum Type {
-    UINT8,
+    UINT8 = 0,
     UINT16,
     UINT32,
     UINT64,

@@ -9,6 +9,37 @@
 
 namespace hx {
 
+static void printUsage(const char* bin_path) {
+  printf("\n");
+  printf("Usage:\n");
+  printf("\t%s -s  <hex_string> [-i <interpretation,...> -p <padding> -b <byte_order>]\n", bin_path);
+  printf("\t%s -f  <filepath> [-i <interpretation,...> -p <padding> -b <byte_order> -o <offset> -n <num_bytes>]\n", bin_path);
+  printf("\n");
+  printf("Where:\n");
+  printf("\t<hex_string>     is a hexadecimal string (With or without whitespaces, not case sensitive)\n");
+  printf("\t<interpretation> is one of uint[8|16|32|64], int[8|16|32|64], double, ipv4, string, char_array_<length>, bool, skipped_<length> (Not case sensitive)\n");
+  printf("\t<padding>        is one of 0, 2, 4, or 8 (Defaulted to 0)\n");
+  printf("\t<byte_order>     is one of LITTLE_ENDIAN, BIG_ENDIAN, LE, or BE. (Not case sensitive, defaulted to BE)\n");
+  printf("\n");
+  printf("\n");
+  printf("All options have long name equivalents:\n");
+  printf("\t-s or --hex-string\n");
+  printf("\t-f or --filepath\n");
+  printf("\t-i or --interpretations\n");
+  printf("\t-p or --padding\n");
+  printf("\t-b or --byte-order\n");
+  printf("\t-o or --offset\n");
+  printf("\t-n or --num-bytes\n");
+  printf("\n");
+  printf("Examples:\n");
+  printf("\t%s -s  \"01 B2 Ff4c\" -i bool,uint8,int16\n", bin_path);
+  printf("\t%s -s  \"0168656c6c6f20776f726c64\" -i bool,char_array_11\n", bin_path);
+  printf("\t%s -f  some/file/to_analyze.txt -o 128 -n 4 -i ipv4]\n", bin_path);
+  printf("\n");
+  // TODO: add examples with skipped, char_array
+}
+
+
 static std::string toUpper(const std::string& str) {
   std::string res;
   const char* p = str.c_str();
@@ -61,36 +92,6 @@ static bool cstrToInterpretations(const char* interpretations_str, std::vector<I
   }
 
   return true;
-}
-
-
-static void printUsage(const char* bin_path) {
-  printf("\n");
-  printf("Usage:\n");
-  printf("\t%s -s  <hex_string> [-i <interpretation,...> -p <padding> -b <byte_order>]\n", bin_path);
-  printf("\t%s -f  <filepath> [-i <interpretation,...> -p <padding> -b <byte_order> -o <offset> -n <num_bytes>]\n", bin_path);
-  printf("\n");
-  printf("Where:\n");
-  printf("\t<hex_string>     is a hexadecimal string (With or without whitespaces, not case sensitive)\n");
-  printf("\t<interpretation> is one of uint[8|16|32|64], int[8|16|32|64], double, ipv4, string, char_array, bool, skipped (Not case sensitive)\n");
-  printf("\t<padding>        is one of 0, 2, 4, or 8 (Defaulted to 0)\n");
-  printf("\t<byte_order>     is one of LITTLE_ENDIAN, BIG_ENDIAN, LE, or BE. (Not case sensitive, defaulted to BE)\n");
-  printf("\n");
-  printf("\n");
-  printf("All options have long name equivalents:\n");
-  printf("\t-s or --hex-string\n");
-  printf("\t-f or --filepath\n");
-  printf("\t-i or --interpretations\n");
-  printf("\t-p or --padding\n");
-  printf("\t-b or --byte-order\n");
-  printf("\t-o or --offset\n");
-  printf("\t-n or --num-bytes\n");
-  printf("\n");
-  printf("Examples:\n");
-  printf("\t%s -s  \"01 B2 Ff4c\" -i bool,uint8,int16\n", bin_path);
-  printf("\t%s -f  some/file/to_analyze.txt -o 128 -n 4 -i ipv4]\n", bin_path);
-  printf("\n");
-  // TODO: add examples with skipped, char_array
 }
 
 

@@ -4,6 +4,21 @@
 
 namespace hx {
 
+static std::string intIpv4ToStr(uint32_t ipv4_uint) {
+  union {
+    uint32_t ip_as_uint_;
+    uint8_t  octets_[4];
+  } ip;
+  ip.ip_as_uint_ = ipv4_uint;
+
+  char ip_cstr[16];
+  const int len = snprintf(ip_cstr, sizeof(ip_cstr), "%u.%u.%u.%u", ip.octets_[3], ip.octets_[2], ip.octets_[1], ip.octets_[0]);
+  if (len < 7 || len > 15) // shortest ip is 0.0.0.0 longest is 255.255.255.255
+    _DEATH("Error while stringifying integer ipv4!");
+
+  return std::string(ip_cstr);
+}
+
 
 Interpreter::Interpreter(Buffer* buffer, const std::vector<Interpretation>* interpretations) : buffer_(buffer), interpretations_(interpretations) {
 }
@@ -61,24 +76,25 @@ void Interpreter::performInterpretation(IConsolePrinter* printer) {
       case hx::Interpretation::STRING: {
         const char* end_ptr = reinterpret_cast<const char*>(memchr(buffer_->getData(), '\0', buffer_->getRemainingLength()));
         itp.size_ = static_cast<size_t>(end_ptr - buffer_->getData() + 1);
-        std::string str(buffer_->getData(), itp.size_);
+        const std::string str(buffer_->getData(), itp.size_);
         printer->printInterpretation(buffer_->getDataAsHexString(itp.size_), itp, str);
         break;
       }
       case hx::Interpretation::CHAR_ARRAY: {
-        std::string str(buffer_->getData(), itp.size_);
+        const std::string str(buffer_->getData(), itp.size_);
         printer->printInterpretation(buffer_->getDataAsHexString(itp.size_), itp, str);
         break;
       }
       case hx::Interpretation::IPV4: {
-        _DEATH("IPV4 parsing is not available yet");
+        const std::string ip_str = intIpv4ToStr(buffer_->getUInt32());
+        printer->printInterpretation(buffer_->getDataAsHexString(itp.size_), itp, ip_str);
         break;
       }
       case hx::Interpretation::SKIPPED: {
-        _DEATH("Cannot skip data yet");
+        printer->printInterpretation(buffer_->getDataAsHexString(itp.size_), itp, /*interpreted_value*/""); // We skip the data, so there is no interpreted value
         break;
       }
-      default: _DEATH("Unknown intepretation"); //Add %d
+      default: _DEATH("Unknown intepretation of type '%d'", static_cast<int>(itp.type_));
     }
     buffer_->advanceReadPtr(itp.size_);
   }
