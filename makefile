@@ -1,4 +1,6 @@
-CPPFLAGS=-std=c++11 -Wall -Wconversion -Wsign-compare -Wreorder -Wold-style-cast -Werror #-Wpedantic #TODO: make compiler as strict as possible
+CPPFLAGS=-std=c++11 -Wall -Wswitch -Wconversion -Wsign-compare -Wreorder -Wold-style-cast -Werror \
+-Wundef -Wuninitialized -Wparentheses  -Wpointer-arith -Wunused -Wimplicit -Wformat -Wreturn-type
+
 RM=rm -f
 SRC_DIR=src/
 BUILD_DIR=build/
