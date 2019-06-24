@@ -7,9 +7,9 @@
 
 
 Command line tool to facilitate the analysis of hexadecimal data.
-Here are some example:
+Here are some examples:
 
-##### Reading from an hexadecimal string
+### Reading from an hexadecimal string
 
 ```bash
 markopaulo@test_server$: hexibit -s  "68656c6c6f20776f726c6401FF" -i char_array_11,uint16
@@ -20,7 +20,7 @@ Data                             Interpretation       Value
 01FF                             UINT16               511
 ```
 
-##### Reading a from a file
+### Reading a from a file
 
 ```
 marko@tserver$ hexibit -t example/file.bin -i ipv4,uint8,int16,bool
