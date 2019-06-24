@@ -52,6 +52,18 @@ static std::string toUpper(const std::string& str) {
 }
 
 
+static std::string cleanHexString(const char* c_str) {
+  std::string trimmed_str;
+  const char* p = c_str;
+  while (*p != '\0') {
+    if (isspace(*p) == 0)
+      trimmed_str += *p;
+    ++p;
+  }
+  return trimmed_str;
+}
+
+
 uint64_t cstrToUInt64(const char* str) {
   char* endptr;
   errno = 0;
@@ -131,7 +143,7 @@ Config::Config(int argc, char* argv[]) {
       break;
     }
     case 's': {  // Hexadecimal string
-      hex_string_ = std::string(optarg);
+      hex_string_ = cleanHexString(optarg);
       //TODO: validate that this is a proper hexa string
       break;
     }
