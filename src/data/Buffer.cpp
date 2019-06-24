@@ -50,17 +50,7 @@ static bool isByteOrderSwappingNeeded(ByteOrder::Enum bo) {
 }
 
 
-Buffer::Buffer(ByteOrder::Enum bo) : byte_order_(bo), swap_byte_order_(isByteOrderSwappingNeeded(bo)), data_(nullptr), len_(0) {
-}
-
-
-Buffer::~Buffer() {
-  if (data_)
-    delete data_;
-}
-
-
-void Buffer::initFromHexString(const std::string& hex_str) {
+Buffer::Buffer(const std::string& hex_str, ByteOrder::Enum bo) : swap_byte_order_(isByteOrderSwappingNeeded(bo)), data_(nullptr), len_(0), offset_(0) {
   const char* p_in = hex_str.c_str();
   len_ = hex_str.size()/2;
   data_ = new char[len_];
@@ -75,8 +65,9 @@ void Buffer::initFromHexString(const std::string& hex_str) {
 }
 
 
-void Buffer::initFromFile(const std::string& filepath, size_t offset) {
-  _DEATH("initFromFile() is not implemented yet");
+Buffer::~Buffer() {
+  if (data_)
+    delete data_;
 }
 
 

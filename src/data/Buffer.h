@@ -3,43 +3,39 @@
 #include <string>
 
 #include "data/ByteOrder.h"
+#include "data/IDataReader.h"
 
 namespace hx {
 
-class Buffer {
+class Buffer : public IDataReader {
 public:
   // Constructor
-  Buffer(ByteOrder::Enum byte_order);
+  Buffer(const std::string& hex_str, ByteOrder::Enum byte_order);
 
   // Destructor
   ~Buffer();
 
-  void initFromHexString(const std::string& hex_str);
-  void initFromFile(const std::string& filepath, size_t offset);
+  void advanceReadPtr(size_t advance_size) override;
+  size_t getRemainingLength() const override;
 
-  void advanceReadPtr(size_t advance_size);
-  size_t getRemainingLength() const;
-
-  const char* getData() const;
+  const char* getData() const override;
   // Remove the need for copy
-  std::string getDataAsHexString(size_t num_bytes) const;
+  std::string getDataAsHexString(size_t num_bytes) const override;
 
-  uint64_t    getUInt64()     const;
-  uint32_t    getUInt32()     const;
-  uint16_t    getUInt16()     const;
-  uint8_t     getUInt8()      const;
+  uint64_t    getUInt64()     const override;
+  uint32_t    getUInt32()     const override;
+  uint16_t    getUInt16()     const override;
+  uint8_t     getUInt8()      const override;
 
-  int64_t     getInt64()      const;
-  int32_t     getInt32()      const;
-  int16_t     getInt16()      const;
-  int8_t      getInt8()       const;
+  int64_t     getInt64()      const override;
+  int32_t     getInt32()      const override;
+  int16_t     getInt16()      const override;
+  int8_t      getInt8()       const override;
 
-  double      getDouble()     const;
-  bool        getBool()       const;
-  std::string getIPv4String() const;
+  double      getDouble()     const override;
+  bool        getBool()       const override;
 
 private:
-  const ByteOrder::Enum   byte_order_;
   const bool              swap_byte_order_;
   char*                   data_;
   size_t                  len_;
