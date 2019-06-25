@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
   // Creating the buffer holding the data to interpret
   hx::IDataReader* reader = nullptr;
   if (!cfg.hex_string_.empty()) {
-    reader = new hx::HexStringReader(cfg.hex_string_, cfg.byte_order_);
+    reader = new hx::HexStringReader(cfg.hex_string_);
   } else if (!cfg.filepath_.empty()) {
     _DEATH("Reading from file is not available yet");
   } else {
@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
   }
 
   // Creating the interpreter and the printer
-  hx::Interpreter interpreter(reader, &cfg.interpretations_);
+  hx::Interpreter interpreter(reader, &cfg.interpretations_, cfg.byte_order_);
   hx::IConsolePrinter* printer = new hx::ListPrinter();
 
   // Interpreting the data
