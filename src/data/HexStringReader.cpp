@@ -1,4 +1,4 @@
-#include "data/Buffer.h"
+#include "data/HexStringReader.h"
 
 #include "MainUtils.h"
 
@@ -50,7 +50,7 @@ static bool isByteOrderSwappingNeeded(ByteOrder::Enum bo) {
 }
 
 
-Buffer::Buffer(const std::string& hex_str, ByteOrder::Enum bo) : swap_byte_order_(isByteOrderSwappingNeeded(bo)), data_(nullptr), len_(0), offset_(0) {
+HexStringReader::HexStringReader(const std::string& hex_str, ByteOrder::Enum bo) : swap_byte_order_(isByteOrderSwappingNeeded(bo)), data_(nullptr), len_(0), offset_(0) {
   const char* p_in = hex_str.c_str();
   len_ = hex_str.size()/2;
   data_ = new char[len_];
@@ -65,30 +65,30 @@ Buffer::Buffer(const std::string& hex_str, ByteOrder::Enum bo) : swap_byte_order
 }
 
 
-Buffer::~Buffer() {
+HexStringReader::~HexStringReader() {
   if (data_)
     delete data_;
 }
 
 
-void Buffer::advanceReadPtr(size_t advance_size) {
+void HexStringReader::advanceReadPtr(size_t advance_size) {
 //  ASSERT(offset_ + advance_size <= len_);
   offset_ += advance_size;
 }
 
 
-size_t Buffer::getRemainingLength() const {
+size_t HexStringReader::getRemainingLength() const {
 //  ASSERT(len_ >= offset_);
   return len_ - offset_;
 }
 
 
-const char* Buffer::getData() const {
+const char* HexStringReader::getData() const {
   return data_ + offset_;
 }
 
 
-std::string Buffer::getDataAsHexString(size_t num_bytes) const {
+std::string HexStringReader::getDataAsHexString(size_t num_bytes) const {
   if (num_bytes > getRemainingLength())
     _DEATH("Not enough data available");
 
@@ -102,7 +102,7 @@ std::string Buffer::getDataAsHexString(size_t num_bytes) const {
 }
 
 
-uint64_t Buffer::getUInt64() const {
+uint64_t HexStringReader::getUInt64() const {
   uint64_t value = *reinterpret_cast<const uint64_t*>(data_ + offset_);
   if (swap_byte_order_)
     value = swapByteOrder64(value);
@@ -111,7 +111,7 @@ uint64_t Buffer::getUInt64() const {
 }
 
 
-uint32_t Buffer::getUInt32() const {
+uint32_t HexStringReader::getUInt32() const {
   uint32_t value = *reinterpret_cast<const uint32_t*>(data_ + offset_);
   if (swap_byte_order_)
     value = htonl(value);
@@ -120,7 +120,7 @@ uint32_t Buffer::getUInt32() const {
 }
 
 
-uint16_t Buffer::getUInt16() const {
+uint16_t HexStringReader::getUInt16() const {
   uint16_t value = *reinterpret_cast<const uint16_t*>(data_ + offset_);
   if (swap_byte_order_)
     value = htons(value);
@@ -129,41 +129,41 @@ uint16_t Buffer::getUInt16() const {
 }
 
 
-uint8_t Buffer::getUInt8() const {
+uint8_t HexStringReader::getUInt8() const {
   return *reinterpret_cast<const uint8_t*>(data_ + offset_);
 }
 
 
-int64_t Buffer::getInt64() const {
+int64_t HexStringReader::getInt64() const {
   uint64_t unsigned_value = getUInt64();
   return reinterpret_cast<int64_t&>(unsigned_value);
 }
 
 
-int32_t Buffer::getInt32() const {
+int32_t HexStringReader::getInt32() const {
   uint32_t unsigned_value = getUInt32();
   return reinterpret_cast<int32_t&>(unsigned_value);
 }
 
 
-int16_t Buffer::getInt16() const {
+int16_t HexStringReader::getInt16() const {
   uint16_t unsigned_value = getUInt16();
   return reinterpret_cast<int16_t&>(unsigned_value);
 }
 
 
-int8_t Buffer::getInt8() const {
+int8_t HexStringReader::getInt8() const {
   return *reinterpret_cast<const int8_t*>(data_ + offset_);
 }
 
 
-double Buffer::getDouble() const {
+double HexStringReader::getDouble() const {
   uint64_t unsigned_value = getUInt64();
   return reinterpret_cast<double&>(unsigned_value);
 }
 
 
-bool Buffer::getBool() const {
+bool HexStringReader::getBool() const {
   return *reinterpret_cast<const bool*>(data_ + offset_);
 }
 

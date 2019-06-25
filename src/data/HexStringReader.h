@@ -7,13 +7,13 @@
 
 namespace hx {
 
-class Buffer : public IDataReader {
+class HexStringReader : public IDataReader {
 public:
   // Constructor
-  Buffer(const std::string& hex_str, ByteOrder::Enum byte_order);
+  HexStringReader(const std::string& hex_str, ByteOrder::Enum byte_order);
 
   // Destructor
-  ~Buffer();
+  ~HexStringReader();
 
   void advanceReadPtr(size_t advance_size) override;
   size_t getRemainingLength() const override;
