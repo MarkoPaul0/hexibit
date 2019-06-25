@@ -56,8 +56,8 @@ $(BUILD_DIR)HexStringReader.o: $(call depends_on, data/HexStringReader)
 $(BUILD_DIR)FileReader.o: $(call depends_on, data/FileReader)
 	$(call compilef, FileReader, data)
 
-$(BUILD_DIR)ByteOrder.o: $(call depends_on, data/ByteOrder)
-	$(call compilef, ByteOrder, data)
+$(BUILD_DIR)ByteOrder.o: $(call depends_on, parse/ByteOrder)
+	$(call compilef, ByteOrder, parse)
 
 $(BUILD_DIR)Interpretation.o: $(call depends_on, parse/Interpretation)
 	$(call compilef, Interpretation, parse)

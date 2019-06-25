@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "data/ByteOrder.h" //TODO: move to the parse directory?
+#include "parse/ByteOrder.h" //TODO: move to the parse directory?
 #include "data/IDataReader.h"
 #include "print/IConsolePrinter.h"
 #include "parse/Interpretation.h"

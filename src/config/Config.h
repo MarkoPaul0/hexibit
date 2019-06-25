@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "data/ByteOrder.h"
+#include "parse/ByteOrder.h"
 #include "parse/Interpretation.h"
 
 /*
