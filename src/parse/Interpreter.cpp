@@ -113,6 +113,22 @@ static bool dataToBool(const char* data) {
 }
 
 
+static std::string dataToIPV4String(const char* data) {
+  union {
+    uint32_t ip_as_uint_;
+    uint8_t  octets_[4];
+  } ip;
+  ip.ip_as_uint_ = *reinterpret_cast<const uint32_t*>(data);
+
+  char ip_cstr[16];
+  const int len = snprintf(ip_cstr, sizeof(ip_cstr), "%u.%u.%u.%u", ip.octets_[3], ip.octets_[2], ip.octets_[1], ip.octets_[0]);
+  if (len < 7 || len > 15) // shortest ip is 0.0.0.0 longest is 255.255.255.255
+    _DEATH("Error while stringifying integer ipv4!");
+
+  return std::string(ip_cstr);
+}
+
+
 Interpreter::Interpreter(IDataReader* data_reader, const std::vector<Interpretation>* interpretations, ByteOrder::Enum target_byte_order) :
 data_reader_(data_reader), interpretations_(interpretations), swap_byte_order_(isByteOrderSwappingNeeded(target_byte_order)) {
 }
@@ -178,24 +194,35 @@ void Interpreter::performInterpretation(IConsolePrinter* printer) {
         break;
       }
       case hx::Interpretation::STRING: {
-        //const char* end_ptr = reinterpret_cast<const char*>(memchr(data_reader_->getData(), '\0', data_reader_->getRemainingLength()));
-        //itp.size_ = static_cast<size_t>(end_ptr - data_reader_->getData() + 1);
-        //const std::string str(data_reader_->getData(), itp.size_);
-        //printer->printInterpretation(data_reader_->getDataAsHexString(itp.size_), itp, str);
+        std::string str;
+        std::vector<char> data_copy;
+        while (data_reader_->getRemainingLength()) {
+          const char c = *data_reader_->getData(/*num_bytes*/1);
+          str += c;
+          data_copy.push_back(c);
+          data_reader_->advanceReadPtr(1);
+          if (c == '\0')
+            break;
+        }
+        itp.size_ = str.size();
+        printer->printInterpretation(dataToHexString(data_copy.data(), itp.size_), itp, str);
         break;
       }
       case hx::Interpretation::CHAR_ARRAY: {
-        //const std::string str(data_reader_->getData(), itp.size_);
-        //printer->printInterpretation(data_reader_->getDataAsHexString(itp.size_), itp, str);
+        const char* data = data_reader_->getData(itp.size_);
+        const std::string str(data, itp.size_);
+        printer->printInterpretation(dataToHexString(data, itp.size_), itp, str);
         break;
       }
       case hx::Interpretation::IPV4: {
-        //const std::string ip_str = intIpv4ToStr(data_reader_->getUInt32());
-        //printer->printInterpretation(data_reader_->getDataAsHexString(itp.size_), itp, ip_str);
+        const char* data = data_reader_->getData(itp.size_);
+        const std::string ip_str = dataToIPV4String(data);
+        printer->printInterpretation(dataToHexString(data, itp.size_), itp, ip_str);
         break;
       }
       case hx::Interpretation::SKIPPED: {
-        //printer->printInterpretation(data_reader_->getDataAsHexString(itp.size_), itp, /*interpreted_value*/""); // We skip the data, so there is no interpreted value
+        const char* data = data_reader_->getData(itp.size_);
+        printer->printInterpretation(dataToHexString(data, itp.size_), itp, /*interpreted_value*/""); // We skip the data, so there is no interpreted value
         break;
       }
       default: _DEATH("Unknown intepretation of type '%d'", static_cast<int>(itp.type_));
@@ -205,6 +232,5 @@ void Interpreter::performInterpretation(IConsolePrinter* printer) {
 
   printer->printFooter();
 }
-
 
 } // namespace hx
