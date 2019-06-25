@@ -16,6 +16,7 @@ public:
   virtual const char* getData() const = 0;
 
   //TODO:  Remove the need for copy
+  //TODO: actually remove and have the interpreter take care of that
   virtual std::string getDataAsHexString(size_t num_bytes) const = 0;
 
   virtual uint64_t    getUInt64()     const = 0;

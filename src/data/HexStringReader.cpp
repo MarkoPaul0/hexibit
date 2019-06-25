@@ -1,25 +1,9 @@
 #include "data/HexStringReader.h"
 
+#include "data/DataUtil.h"
 #include "MainUtils.h"
 
 namespace hx {
-
-static uint64_t swapByteOrder64(const uint64_t& input) {
-  uint64_t rval;
-  uint8_t* data = reinterpret_cast<uint8_t*>(&rval);
-
-  data[0] = static_cast<uint8_t>(input >> 56);
-  data[1] = static_cast<uint8_t>(input >> 48);
-  data[2] = static_cast<uint8_t>(input >> 40);
-  data[3] = static_cast<uint8_t>(input >> 32);
-  data[4] = static_cast<uint8_t>(input >> 24);
-  data[5] = static_cast<uint8_t>(input >> 16);
-  data[6] = static_cast<uint8_t>(input >> 8);
-  data[7] = static_cast<uint8_t>(input >> 0);
-
-  return rval;
-}
-
 
 static int parseHexCharacter(char c) {
   int value = 0;
@@ -36,21 +20,7 @@ static int parseHexCharacter(char c) {
 }
 
 
-static bool isByteOrderSwappingNeeded(ByteOrder::Enum bo) {
-  union {
-    uint16_t  value_;   // 16 bit unsigned integer
-    char      mem_[2];  // underlying memory
-  } uint16;
-
-  uint16.value_ = 0x0102;
-  const bool is_host_big_endian = (uint16.mem_[0] == 0x01);
-  const bool is_desired_order_big_endian = (bo == ByteOrder::Enum::BE);
-
-  return (is_host_big_endian != is_desired_order_big_endian);
-}
-
-
-HexStringReader::HexStringReader(const std::string& hex_str, ByteOrder::Enum bo) : swap_byte_order_(isByteOrderSwappingNeeded(bo)), data_(nullptr), len_(0), offset_(0) {
+HexStringReader::HexStringReader(const std::string& hex_str, ByteOrder::Enum bo) : swap_byte_order_(DataUtil::isByteOrderSwappingNeeded(bo)), data_(nullptr), len_(0), offset_(0) {
   const char* p_in = hex_str.c_str();
   len_ = hex_str.size()/2;
   data_ = new char[len_];
@@ -88,6 +58,7 @@ const char* HexStringReader::getData() const {
 }
 
 
+//TODO: remove
 std::string HexStringReader::getDataAsHexString(size_t num_bytes) const {
   if (num_bytes > getRemainingLength())
     _DEATH("Not enough data available");
@@ -105,7 +76,7 @@ std::string HexStringReader::getDataAsHexString(size_t num_bytes) const {
 uint64_t HexStringReader::getUInt64() const {
   uint64_t value = *reinterpret_cast<const uint64_t*>(data_ + offset_);
   if (swap_byte_order_)
-    value = swapByteOrder64(value);
+    value = DataUtil::swapByteOrder64(value);
 
   return value;
 }
