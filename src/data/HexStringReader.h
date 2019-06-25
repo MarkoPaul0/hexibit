@@ -18,7 +18,7 @@ public:
 
   size_t getRemainingLength() const override;
 
-  const char* getData(size_t num_bytes) const override;
+  const char* getData(size_t num_bytes) override;
 
 private:
   const char* const       data_;

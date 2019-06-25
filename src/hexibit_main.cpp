@@ -1,6 +1,7 @@
 #include "MainUtils.h"
 
 #include "config/Config.h"
+#include "data/FileReader.h"
 #include "data/HexStringReader.h"
 #include "data/IDataReader.h"
 #include "parse/Interpreter.h"
@@ -17,7 +18,7 @@ int main(int argc, char* argv[]) {
   if (!cfg.hex_string_.empty()) {
     reader = new hx::HexStringReader(cfg.hex_string_);
   } else if (!cfg.filepath_.empty()) {
-    _DEATH("Reading from file is not available yet");
+    reader = new hx::FileReader(cfg.filepath_, cfg.offset_);
   } else {
     _DEATH("Invalid config");
   }

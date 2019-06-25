@@ -14,7 +14,8 @@ public:
 
   // The returned data is owned by the reader and can be invalidated
   // be the next getXXXX() call
-  virtual const char* getData(size_t num_bytes) const = 0;
+  // It is invalid to call this method with num_bytes = 0
+  virtual const char* getData(size_t num_bytes) = 0;
 };
 
 

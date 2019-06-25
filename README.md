@@ -23,7 +23,7 @@ Data                             Interpretation       Value
 ### Reading a from a file
 
 ```
-marko@tserver$ hexibit -t example/file.bin -i ipv4,uint8,int16,bool
+marko@tserver$ hexibit -f example/file.bin -i ipv4,uint8,int16,bool
 
 Data                             Interpretation       Value
 -----------------------------------------------------------
