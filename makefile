@@ -16,12 +16,19 @@ endif
 
 all: directories 
 	$(MAKE) $(BIN_DIR)hexibit_app 
+	$(MAKE) $(BIN_DIR)hexibit_tests 
+	$(MAKE) run_tests 
 
 .PHONY directories: $(BIN_DIR) $(BUILD_DIR)
 	mkdir -p $(BIN_DIR) $(BUILD_DIR)
 
 clean:
 	$(RM) -rf $(BIN_DIR) $(BUILD_DIR)
+
+.PHONY run_tests: hexibit_tests
+ifeq ($(UNIT_TESTS), yes)
+	$(BIN_DIR)hexibit_tests
+endif
 
 define depends_on 
     $(addsuffix .h, $(addprefix $(SRC_DIR), $(1))) $(addsuffix .cpp, $(addprefix $(SRC_DIR), $(1))) $(SRC_DIR)/MainUtils.h
@@ -68,3 +75,20 @@ $(BUILD_DIR)Interpreter.o: $(call depends_on, parse/Interpreter)
 $(BUILD_DIR)ListPrinter.o: $(call depends_on, print/ListPrinter)
 	$(call compilef, ListPrinter, print)
 
+##################### VWAP TESTS ###################################################
+#Linking
+$(BIN_DIR)hexibit_tests: $(BUILD_DIR)HexStringReader_test.o $(BUILD_DIR)test_main.o
+ifeq ($(UNIT_TESTS), yes)
+	g++ $(BUILD_DIR)HexStringReader.o $(BUILD_DIR)HexStringReader_test.o $(BUILD_DIR)test_main.o -o $(BIN_DIR)hexibit_tests
+endif
+
+#Compiling
+$(BUILD_DIR)test_main.o: $(TEST_DIR)test_main.cpp 
+ifeq ($(UNIT_TESTS), yes)
+	$(call compilef_test, test_main)
+endif
+
+$(BUILD_DIR)HexStringReader_test.o: $(TEST_DIR)HexStringReader_test.cpp
+ifeq ($(UNIT_TESTS), yes)
+	$(call compilef_test, HexStringReader_test)
+endif

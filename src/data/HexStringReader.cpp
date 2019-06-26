@@ -56,7 +56,7 @@ size_t HexStringReader::getRemainingLength() const {
 }
 
 
-const char* HexStringReader::getData(size_t num_bytes) {
+const char* HexStringReader::getReadPtr(size_t num_bytes) {
   //TODO: add check to verify that data_ + offset_ + num_bytes < len_
   return data_ + offset_;
 }

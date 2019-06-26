@@ -25,15 +25,18 @@ struct Interpretation {
     // TODO: Any other interesting types?
   };
 
-  Type    type_;
-  size_t  size_;
+  Type    type_;  // Interpretation type
+  size_t  size_;  // Size of the interpretation. This size may be static, for instance UINT32 is 4 bytes,
+                  // or dynamic, for instance CHAR_ARRAY.
 
   // Constructor
   Interpretation();
 
-  static const char* interpretationToCstr(Interpretation itp);
-
+  // Convert a string into an Interpretatation. Return true if the conversion was a success, false otherwise.
   static bool strToInterpretation(const std::string& interpretation_str, Interpretation* interpretation_out);
+
+  // Convert an interpretation into a c string
+  static const char* interpretationToCstr(Interpretation itp);
 };
 
 } // namespace hx

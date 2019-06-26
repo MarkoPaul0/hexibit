@@ -67,7 +67,7 @@ size_t FileReader::getRemainingLength() const {
 }
 
 
-const char* FileReader::getData(size_t num_bytes) {
+const char* FileReader::getReadPtr(size_t num_bytes) {
   if (num_bytes > current_data_capacity_) {
     current_data_ = static_cast<char*>(realloc(current_data_, num_bytes));
     if (!current_data_)

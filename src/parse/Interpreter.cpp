@@ -135,7 +135,7 @@ data_reader_(data_reader), interpretations_(interpretations), swap_byte_order_(i
 
 
 void Interpreter::performInterpretation(IConsolePrinter* printer) {
-  printer->printHeader();
+  printer->startPrint();
 
   for (hx::Interpretation itp: *interpretations_) {
     if (data_reader_->getRemainingLength() < itp.size_) {
@@ -143,52 +143,52 @@ void Interpreter::performInterpretation(IConsolePrinter* printer) {
     }
     switch (itp.type_) {
       case hx::Interpretation::UINT8: {
-        const char* data = data_reader_->getData(itp.size_);
+        const char* data = data_reader_->getReadPtr(itp.size_);
         printer->printInterpretation(dataToHexString(data, itp.size_), itp, std::to_string(dataToUInt8(data)));
         break;
       }
       case hx::Interpretation::UINT16: {
-        const char* data = data_reader_->getData(itp.size_);
+        const char* data = data_reader_->getReadPtr(itp.size_);
         printer->printInterpretation(dataToHexString(data, itp.size_), itp, std::to_string(dataToUInt16(data, swap_byte_order_)));
         break;
       }
       case hx::Interpretation::UINT32: {
-        const char* data = data_reader_->getData(itp.size_);
+        const char* data = data_reader_->getReadPtr(itp.size_);
         printer->printInterpretation(dataToHexString(data, itp.size_), itp, std::to_string(dataToUInt32(data, swap_byte_order_)));
         break;
       }
       case hx::Interpretation::UINT64: {
-        const char* data = data_reader_->getData(itp.size_);
+        const char* data = data_reader_->getReadPtr(itp.size_);
         printer->printInterpretation(dataToHexString(data, itp.size_), itp, std::to_string(dataToUInt64(data, swap_byte_order_)));
         break;
       }
       case hx::Interpretation::INT8: {
-        const char* data = data_reader_->getData(itp.size_);
+        const char* data = data_reader_->getReadPtr(itp.size_);
         printer->printInterpretation(dataToHexString(data, itp.size_), itp, std::to_string(dataToInt8(data)));
         break;
       }
       case hx::Interpretation::INT16: {
-        const char* data = data_reader_->getData(itp.size_);
+        const char* data = data_reader_->getReadPtr(itp.size_);
         printer->printInterpretation(dataToHexString(data, itp.size_), itp, std::to_string(dataToInt16(data, swap_byte_order_)));
         break;
       }
       case hx::Interpretation::INT32: {
-        const char* data = data_reader_->getData(itp.size_);
+        const char* data = data_reader_->getReadPtr(itp.size_);
         printer->printInterpretation(dataToHexString(data, itp.size_), itp, std::to_string(dataToInt32(data, swap_byte_order_)));
         break;
       }
       case hx::Interpretation::INT64: {
-        const char* data = data_reader_->getData(itp.size_);
+        const char* data = data_reader_->getReadPtr(itp.size_);
         printer->printInterpretation(dataToHexString(data, itp.size_), itp, std::to_string(dataToInt64(data, swap_byte_order_)));
         break;
       }
       case hx::Interpretation::DOUBLE: {
-        const char* data = data_reader_->getData(itp.size_);
+        const char* data = data_reader_->getReadPtr(itp.size_);
         printer->printInterpretation(dataToHexString(data, itp.size_), itp, std::to_string(dataToDouble(data, swap_byte_order_)));
         break;
       }
       case hx::Interpretation::BOOL: {
-        const char* data = data_reader_->getData(itp.size_);
+        const char* data = data_reader_->getReadPtr(itp.size_);
         const char* val_str = (dataToBool(data) ? "true" : "false");
         printer->printInterpretation(dataToHexString(data, itp.size_), itp, val_str);
         break;
@@ -197,7 +197,7 @@ void Interpreter::performInterpretation(IConsolePrinter* printer) {
         std::string str;
         std::vector<char> data_copy;
         while (data_reader_->getRemainingLength()) {
-          const char c = *data_reader_->getData(/*num_bytes*/1);
+          const char c = *data_reader_->getReadPtr(/*num_bytes*/1);
           str += c;
           data_copy.push_back(c);
           data_reader_->advanceReadPtr(1);
@@ -209,19 +209,19 @@ void Interpreter::performInterpretation(IConsolePrinter* printer) {
         break;
       }
       case hx::Interpretation::CHAR_ARRAY: {
-        const char* data = data_reader_->getData(itp.size_);
+        const char* data = data_reader_->getReadPtr(itp.size_);
         const std::string str(data, itp.size_);
         printer->printInterpretation(dataToHexString(data, itp.size_), itp, str);
         break;
       }
       case hx::Interpretation::IPV4: {
-        const char* data = data_reader_->getData(itp.size_);
+        const char* data = data_reader_->getReadPtr(itp.size_);
         const std::string ip_str = dataToIPV4String(data);
         printer->printInterpretation(dataToHexString(data, itp.size_), itp, ip_str);
         break;
       }
       case hx::Interpretation::SKIPPED: {
-        const char* data = data_reader_->getData(itp.size_);
+        const char* data = data_reader_->getReadPtr(itp.size_);
         printer->printInterpretation(dataToHexString(data, itp.size_), itp, /*interpreted_value*/""); // We skip the data, so there is no interpreted value
         break;
       }
@@ -230,7 +230,7 @@ void Interpreter::performInterpretation(IConsolePrinter* printer) {
     data_reader_->advanceReadPtr(itp.size_);
   }
 
-  printer->printFooter();
+  printer->endPrint();
 }
 
 } // namespace hx

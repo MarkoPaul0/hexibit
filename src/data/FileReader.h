@@ -5,26 +5,33 @@
 #include "data/IDataReader.h"
 
 namespace hx {
-
+/*
+  Small class implementing IDataReader functionalities by providing access to
+  data from a file.
+*/
 class FileReader : public IDataReader {
-public:
+public: //----------------------- Public Interface -----------------------------
   // Constructor
+  // Inputs:
+  //    filepath:         path to the file to be read.
+  //    initial_offset:   offset at which the file starts being read.
   FileReader(const std::string& filepath, size_t initial_offset);
 
   // Destructor
   ~FileReader();
 
-  void advanceReadPtr(size_t advance_size) override;
-
+  //--------------------- Implementation of IDataReader ------------------------
+  // All of the functions below are an implementation of IDataReader.
+  // Read IDataReader.h for more information
+  void advanceReadPtr(size_t num_bytes) override;
   size_t getRemainingLength() const override;
+  const char* getReadPtr(size_t num_bytes) override;
 
-  const char* getData(size_t num_bytes) override;
-
-private:
-  FILE*      file_;
-  size_t     file_size_;
-  char*      current_data_; // Buffer used to temporarily place data extracted from the file, process it and expose it to the client
-  size_t     current_data_capacity_;
+private: //---------------------- Public Interface -----------------------------
+  FILE*      file_;                   // File descriptor
+  size_t     file_size_;              // Size of file_ in bytes
+  char*      current_data_;           // Buffer used to temporarily place data extracted from the file
+  size_t     current_data_capacity_;  // Size of current_data_
 };
 
 

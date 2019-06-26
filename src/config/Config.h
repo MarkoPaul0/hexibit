@@ -27,12 +27,11 @@ public: //---------------- Public interface -------------------
   Config(const Config&)           = delete;
   Config& operator=(const Config) = delete;
 
-  // Input data
+  // Input data, note that hex_string_ and filepath_ are mutually exclusive
   std::string                   hex_string_;          // Input data as a hexadecimal string, e.g. "A052F1C8" (not case sensitive)
   std::string                   filepath_;            // Path to a file containing the data to interpret
-  //TODO: ensure that hex_string_ and filepath_ are mutually exclusive
 
-  // Offset when looking at a file
+  // Offset when looking at a file (only used if the input if a file)
   size_t                        offset_;              // If input is a file, this is the offset at which the interpretation begins. 0 by default.
 
   // Translation options

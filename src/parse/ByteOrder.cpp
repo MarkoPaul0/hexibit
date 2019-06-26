@@ -24,9 +24,9 @@ bool ByteOrder::cstrToByteOrder(const char* byte_order_str, Enum* byte_order_out
 
 const char* ByteOrder::byteOrderToCstr(Enum bo) {
   switch(bo) {
-    case Enum::LE: return "LITTLE_ENDIAN";
-    case Enum::BE: return "BIG_ENDIAN";
-    default:               _DEATH("Unknown byte order"); //Add %d
+    case Enum::LE:  return "LITTLE_ENDIAN";
+    case Enum::BE:  return "BIG_ENDIAN";
+    default:        _DEATH("Unknown byte order %d", static_cast<int>(bo));
   }
 }
 
