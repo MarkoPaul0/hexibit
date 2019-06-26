@@ -27,7 +27,7 @@ public: //----------------------- Public Interface -----------------------------
   size_t getRemainingLength() const override;
   const char* getReadPtr(size_t num_bytes) override;
 
-private: //---------------------- Public Interface -----------------------------
+private: //---------------------- Private Interface ----------------------------
   FILE*      file_;                   // File descriptor
   size_t     file_size_;              // Size of file_ in bytes
   char*      current_data_;           // Buffer used to temporarily place data extracted from the file

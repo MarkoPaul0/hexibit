@@ -24,7 +24,7 @@ public: //----------------------- Public Interface -----------------------------
   size_t getRemainingLength() const override;
   const char* getReadPtr(size_t num_bytes) override;
 
-private: //---------------------- Public Interface -----------------------------
+private: //--------------------- Private Interface -----------------------------
   const char* const       data_;   // Underlying data
   const size_t            len_;    // Length of data_
   size_t                  offset_; // Reading offset

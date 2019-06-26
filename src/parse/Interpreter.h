@@ -24,7 +24,7 @@ public: //----------------------- Public Interface -----------------------------
   // displaying the interpretation work.
   void performInterpretation(IConsolePrinter* printer);
 
-private: //---------------------- Public Interface -----------------------------
+private: //--------------------- Private Interface -----------------------------
   IDataReader* const                          data_reader_;      // Pointer to the data reader
   const std::vector<Interpretation>* const    interpretations_;  // Pointer to the set of interpretations to perform of the data
   const bool                                  swap_byte_order_;  // Boolean determining if the byte order of the data needs to be swapped to match the host.
