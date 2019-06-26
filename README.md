@@ -27,9 +27,9 @@ marko@tserver$ hexibit -f example/file.bin -i ipv4,uint8,int16,bool
 
 Data                             Interpretation       Value
 -----------------------------------------------------------
-FFFF0001                         IPV4                 192.168.0.1
+C0A80001                         IPV4                 192.168.0.1
 05                               UINT8                5
-FFFF                             INT16                -14
+FFF2                             INT16                -14
 01                               BOOL                 true
 ```
 
