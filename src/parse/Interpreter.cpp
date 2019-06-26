@@ -40,7 +40,7 @@ static std::string dataToHexString(const char* data, size_t num_bytes) {
   const size_t str_len = 2*num_bytes;
   char* str_buf = new char[str_len];
   for(size_t i = 0; i < num_bytes; ++i)
-    sprintf(&str_buf[2*i], "%02X", data[i]);
+    sprintf(&str_buf[2*i], "%02X ", static_cast<uint8_t>(data[i]));
 
   std::string str(str_buf, str_len);
   return str;
@@ -113,17 +113,21 @@ static bool dataToBool(const char* data) {
 }
 
 
-static std::string dataToIPV4String(const char* data) {
+static std::string dataToIPV4String(const char* data, bool swap_byte_order) {
   union {
     uint32_t ip_as_uint_;
     uint8_t  octets_[4];
   } ip;
   ip.ip_as_uint_ = *reinterpret_cast<const uint32_t*>(data);
 
+  if (swap_byte_order)
+    ip.ip_as_uint_ = htonl(ip.ip_as_uint_);
+
   char ip_cstr[16];
   const int len = snprintf(ip_cstr, sizeof(ip_cstr), "%u.%u.%u.%u", ip.octets_[3], ip.octets_[2], ip.octets_[1], ip.octets_[0]);
   if (len < 7 || len > 15) // shortest ip is 0.0.0.0 longest is 255.255.255.255
     _DEATH("Error while stringifying integer ipv4!");
+
 
   return std::string(ip_cstr);
 }
@@ -216,7 +220,7 @@ void Interpreter::performInterpretation(IConsolePrinter* printer) {
       }
       case hx::Interpretation::IPV4: {
         const char* data = data_reader_->getReadPtr(itp.size_);
-        const std::string ip_str = dataToIPV4String(data);
+        const std::string ip_str = dataToIPV4String(data, swap_byte_order_);
         printer->printInterpretation(dataToHexString(data, itp.size_), itp, ip_str);
         break;
       }
