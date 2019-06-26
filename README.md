@@ -66,6 +66,24 @@ Where:
 - **\<byte_order\>**: is one of LITTLE_ENDIAN, BIG_ENDIAN, LE, or BE. (Not case sensitive, defaulted to BE).
 - **\<offset\>**: is the offset at which the data interpretation starts in the input file.
 
+### Valid interpretations
+#### Static interpretations:
+* UINT8
+* UINT16
+* UINT32
+* UINT64
+* INT8
+* INT16
+* INT32
+* INT64
+* DOUBLE
+* BOOL
+* IPV4
+#### Dynamic interpretations:
+* STRING
+* CHAR_ARRAY
+* SKIPPED
+
 ## Extending this project
 Hexibit has been designed so that 2 core functionality can easily be extended:
 1) Extending what type of data can be read.
