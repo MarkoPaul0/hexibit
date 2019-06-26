@@ -5,53 +5,23 @@
 TEST_CASE("HexStringReader properly initialized", "[HexStringReader]" ){
     hx::HexStringReader hsr("AB0102CD");
     REQUIRE(hsr.getRemainingLength() == 4);
+    const uint32_t expected_data = 0xCD0201AB;
+    REQUIRE(*reinterpret_cast<const uint32_t*>(hsr.getReadPtr(4)) == expected_data);
+}
+
+TEST_CASE("HexStringReader advanceReadPtr()", "[HexStringReader]") {
+    hx::HexStringReader hsr("0102030405060708090A0B0C0D0E0F");
+    const char* const read_ptr = hsr.getReadPtr(15);
+    REQUIRE(hsr.getRemainingLength() == 15);
+
+    SECTION("Normal case") {
+        hsr.advanceReadPtr(10);
+        REQUIRE(hsr.getRemainingLength() == 5);
+        REQUIRE(hsr.getReadPtr(1) == read_ptr + 10);
+    }
 }
 
 /*
-TEST_CASE("HexStringReader advanceReadPtr()", "[HexStringReader]") {
-    hx::HexStringReader bb;
-    const char* const read_ptr = bb.getReadPtr();
-
-    SECTION("Normal case") {
-        bb.advanceWritePtr(10);
-        REQUIRE(bb.readableSize() == 10);
-        REQUIRE(bb.writableSize() == hx::HexStringReader::MAX_SIZE - 10);
-        REQUIRE(bb.getReadPtr() == read_ptr);
-    }
-
-    SECTION("Edge case 0") {
-        bb.advanceWritePtr(0);
-        REQUIRE(bb.readableSize() == 0);
-        REQUIRE(bb.getReadPtr() == read_ptr);
-        REQUIRE(bb.writableSize() == hx::HexStringReader::MAX_SIZE);
-    }
-
-    SECTION("Edge case 1") {
-        bb.advanceWritePtr(1);
-        REQUIRE(bb.readableSize() == 1);
-        REQUIRE(bb.writableSize() == hx::HexStringReader::MAX_SIZE - 1);
-        REQUIRE(bb.getReadPtr() == read_ptr);
-    }
-
-    SECTION("Edge case MAX_SIZE - 1") {
-        bb.advanceWritePtr(hx::HexStringReader::MAX_SIZE - 1);
-        REQUIRE(bb.readableSize() == hx::HexStringReader::MAX_SIZE - 1);
-        REQUIRE(bb.writableSize() == 1);
-        REQUIRE(bb.getReadPtr() == read_ptr);
-    }
-
-    SECTION("Edge case MAX_SIZE") {
-        bb.advanceWritePtr(hx::HexStringReader::MAX_SIZE);
-        REQUIRE(bb.readableSize() == hx::HexStringReader::MAX_SIZE);
-        REQUIRE(bb.writableSize() == 0);
-        REQUIRE(bb.getReadPtr() == read_ptr);
-    }
-
-    SECTION("Edge case space filled") {
-        REQUIRE_THROWS(bb.advanceWritePtr(hx::HexStringReader::MAX_SIZE + 1));
-    }
-}
-
 TEST_CASE("HexStringReader advanceWritePtr()", "[HexStringReader]") {
     hx::HexStringReader bb;
     const char* const write_ptr = bb.getWritePtr(0);
