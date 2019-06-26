@@ -15,7 +15,7 @@ BUILD_DIR=build-dbg/
 endif
 
 all: directories 
-	$(MAKE) $(BIN_DIR)hexibit_app 
+	$(MAKE) $(BIN_DIR)hexibit 
 	$(MAKE) $(BIN_DIR)hexibit_tests 
 	$(MAKE) run_tests 
 
@@ -45,10 +45,10 @@ endef
 
 ##################### HEXIBIT APP ###################################################
 #Linking
-$(BIN_DIR)hexibit_app: $(BUILD_DIR)ByteOrder.o $(BUILD_DIR)ListPrinter.o $(BUILD_DIR)Interpretation.o $(BUILD_DIR)Interpreter.o \
+$(BIN_DIR)hexibit: $(BUILD_DIR)ByteOrder.o $(BUILD_DIR)ListPrinter.o $(BUILD_DIR)Interpretation.o $(BUILD_DIR)Interpreter.o \
 $(BUILD_DIR)Config.o $(BUILD_DIR)FileReader.o $(BUILD_DIR)HexStringReader.o $(BUILD_DIR)hexibit_main.o
 	g++ $(BUILD_DIR)ByteOrder.o $(BUILD_DIR)ListPrinter.o $(BUILD_DIR)Interpretation.o $(BUILD_DIR)Interpreter.o \
-  $(BUILD_DIR)Config.o $(BUILD_DIR)FileReader.o $(BUILD_DIR)HexStringReader.o $(BUILD_DIR)hexibit_main.o -o $(BIN_DIR)hexibit_app
+  $(BUILD_DIR)Config.o $(BUILD_DIR)FileReader.o $(BUILD_DIR)HexStringReader.o $(BUILD_DIR)hexibit_main.o -o $(BIN_DIR)hexibit
 
 #Compiling
 $(BUILD_DIR)hexibit_main.o: $(SRC_DIR)hexibit_main.cpp
