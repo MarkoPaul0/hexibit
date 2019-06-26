@@ -61,7 +61,4 @@ const char* HexStringReader::getReadPtr(size_t num_bytes) {
   return data_ + offset_;
 }
 
-
-//TODO: remove
-
 } // namespace ct
