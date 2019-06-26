@@ -13,13 +13,14 @@ static void printUsage(const char* bin_path) {
   printf("\n");
   printf("Usage:\n");
   printf("\t%s -s  <hex_string> [-i <interpretation,...> -p <padding> -b <byte_order>]\n", bin_path);
-  printf("\t%s -f  <filepath> [-i <interpretation,...> -p <padding> -b <byte_order> -o <offset> -n <num_bytes>]\n", bin_path);
+  printf("\t%s -f  <filepath> [-i <interpretation,...> -p <padding> -b <byte_order> -o <offset>]\n", bin_path);
   printf("\n");
   printf("Where:\n");
   printf("\t<hex_string>     is a hexadecimal string (With or without whitespaces, not case sensitive)\n");
   printf("\t<interpretation> is one of uint[8|16|32|64], int[8|16|32|64], double, ipv4, string, char_array_<length>, bool, skipped_<length> (Not case sensitive)\n");
   printf("\t<padding>        is one of 0, 2, 4, or 8 (Defaulted to 0)\n");
   printf("\t<byte_order>     is one of LITTLE_ENDIAN, BIG_ENDIAN, LE, or BE. (Not case sensitive, defaulted to BE)\n");
+  printf("\t<offset>         is the offset at which the interpretation of the data in the input file starts.\n");
   printf("\n");
   printf("\n");
   printf("All options have long name equivalents:\n");
@@ -29,7 +30,6 @@ static void printUsage(const char* bin_path) {
   printf("\t-p or --padding\n");
   printf("\t-b or --byte-order\n");
   printf("\t-o or --offset\n");
-  printf("\t-n or --num-bytes\n");
   printf("\n");
   printf("Examples:\n");
   printf("\t%s -s  \"01 B2 Ff4c\" -i bool,uint8,int16\n", bin_path);

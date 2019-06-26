@@ -35,4 +35,38 @@ FFF2                             INT16                -14
 
 ## Installation
 
-* A computer running a linux distribution
+* Clone or download the repo
+
+* make the repo
+
+* use the binary produced in the `bin/` directory
+
+## Synopsis
+
+### Hexadecimal Reader Mode
+This mode allows you to interpret data from a hexadecimal string.
+```bash
+hexibit -s  <hex_string> [-i <interpretation,...> -p <padding> -b <byte_order>]
+```
+Where:
+* *<hex_string>*: is a hexadecimal string (With or without whitespaces, not case sensitive)
+* *<interpretation>*: is one of uint[8|16|32|64], int[8|16|32|64], double, ipv4, string, char_array_<length>, bool, skipped_<length> (Not case sensitive)
+* *<padding>*: is one of 0, 2, 4, or 8 (Defaulted to 0)
+* *<byte_order>*: is one of LITTLE_ENDIAN, BIG_ENDIAN, LE, or BE. (Not case sensitive, defaulted to BE)
+
+### File Reader Mode
+Thie mode allows you to interpret data from a binary file.
+```bash
+hexibit -f  <filepath> [-i <interpretation,...> -p <padding> -b <byte_order> -o <offset> -n <num_bytes>]
+```
+Where:
+* *<filepath>*: path of the file which data is to be interpreted.
+* *<interpretation>*: is one of uint[8|16|32|64], int[8|16|32|64], double, ipv4, string, char_array_<length>, bool, skipped_<length> (Not case sensitive)
+* *<padding>*: is one of 0, 2, 4, or 8 (Defaulted to 0)
+* *<byte_order>*: is one of LITTLE_ENDIAN, BIG_ENDIAN, LE, or BE. (Not case sensitive, defaulted to BE)
+* *<offset>*: is the offset at which the data interpretation starts in the input file
+
+## Extending this project
+Hexibit has been designed so that 2 core functionality can easily be extended:
+1) Extending what type of data can be read.
+2) Extending how the interpretation is printed.
