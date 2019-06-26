@@ -57,7 +57,7 @@ Where:
 ### File Reader Mode
 Thie mode allows you to interpret data from a binary file.
 ```bash
-hexibit -f  <filepath> [-i <interpretation,...> -p <padding> -b <byte_order> -o <offset> -n <num_bytes>]
+hexibit -f  <filepath> [-i <interpretation,...> -p <padding> -b <byte_order> -o <offset>]
 ```
 Where:
 - `filepath` path of the file which data is to be interpreted.
@@ -67,22 +67,30 @@ Where:
 - `offset` is the offset at which the data interpretation starts in the input file.
 
 ### Valid interpretations
-#### Static interpretations:
-* UINT8
-* UINT16
-* UINT32
-* UINT64
-* INT8
-* INT16
-* INT32
-* INT64
-* DOUBLE
-* BOOL
-* IPV4
-#### Dynamic interpretations:
-* STRING
-* CHAR_ARRAY
-* SKIPPED
+#### Static-length interpretations:
+The length of the interpretation is embedded in the interpretation itself (no length need to passed).
+* **UINT8**
+* **UINT16**
+* **UINT32**
+* **UINT64**
+* **INT8**
+* **INT16**
+* **INT32**
+* **INT64**
+* **DOUBLE**
+* **BOOL**
+* **IPV4**
+#### Dynamic-length interpretations:
+The length of the interpretation can be an input passed to the interpretation
+* **SKIPPED_\<length\>**: for this interpretation, the length parameter is mandatory and specifies the number of bytes to be skipped. For example:
+  ```bash
+  -i uint8,skipped_42,bool
+  ```
+  In the example above, the first byte is interpreted as a uint8, the following 42 bytes are skipped, and the 43rd one is interpreted as a bool.
+  
+* **CHAR_ARRAY[_\<length\>]**: for this interpretation, the length parameter is optional. 
+  * If \<length\> is not specified, the sequence of bytes is treated as a null terminated array. 
+  * If \<length\> is specified, then <length> bytes are interpreted as characters.
 
 ## Extending this project
 Hexibit has been designed so that 2 core functionality can easily be extended:
