@@ -60,11 +60,11 @@ Thie mode allows you to interpret data from a binary file.
 hexibit -f  <filepath> [-i <interpretation,...> -p <padding> -b <byte_order> -o <offset> -n <num_bytes>]
 ```
 Where:
-- *<filepath>*: path of the file which data is to be interpreted.
-- *<interpretation>*: is one of uint[8|16|32|64], int[8|16|32|64], double, ipv4, string, char_array_<length>, bool, skipped_<length> (Not case sensitive).
-- *<padding>*: is one of 0, 2, 4, or 8 (Defaulted to 0).
-- *<byte_order>*: is one of LITTLE_ENDIAN, BIG_ENDIAN, LE, or BE. (Not case sensitive, defaulted to BE).
-- *<offset>*: is the offset at which the data interpretation starts in the input file.
+- **\<filepath\>**: path of the file which data is to be interpreted.
+- **\<interpretation\>**: is one of uint[8|16|32|64], int[8|16|32|64], double, ipv4, string, char_array_<length>, bool, skipped_<length> (Not case sensitive).
+- **\<padding\>**: is one of 0, 2, 4, or 8 (Defaulted to 0).
+- **\<byte_order\>**: is one of LITTLE_ENDIAN, BIG_ENDIAN, LE, or BE. (Not case sensitive, defaulted to BE).
+- **\<offset\>**: is the offset at which the data interpretation starts in the input file.
 
 ## Extending this project
 Hexibit has been designed so that 2 core functionality can easily be extended:
