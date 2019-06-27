@@ -8,16 +8,16 @@ TEST_DIR=test/
 BIN_DIR=bin/
 UNIT_TESTS ?= no
 BUILD_MODE ?= normal
+CXX=g++
 
 ifeq ($(BUILD_MODE), dbg)
-CPPFLAGS+=-DDBG -g
-BUILD_DIR=build-dbg/
+  CPPFLAGS+=-DDBG -g
+  BUILD_DIR=build-dbg/
+  BIN_DIR=bin-dbg/
 endif
 
 all: directories 
 	$(MAKE) $(BIN_DIR)hexibit 
-	$(MAKE) $(BIN_DIR)hexibit_tests 
-	$(MAKE) run_tests 
 
 .PHONY directories: $(BIN_DIR) $(BUILD_DIR)
 	mkdir -p $(BIN_DIR) $(BUILD_DIR)
@@ -30,65 +30,19 @@ ifeq ($(UNIT_TESTS), yes)
 	$(BIN_DIR)hexibit_tests
 endif
 
-define depends_on 
-    $(addsuffix .h, $(addprefix $(SRC_DIR), $(1))) $(addsuffix .cpp, $(addprefix $(SRC_DIR), $(1))) $(SRC_DIR)/MainUtils.h
-endef
-
-#define compile $(addsuffix .h, $(addprefix $(SRC_DIR), $(1))) $(addsuffix .cpp, $(addprefix $(SRC_DIR), $(1))) 
-define compilef
-	g++ $(CPPFLAGS) -Isrc -o $(addsuffix .o, $(addprefix $(BUILD_DIR), $(1))) -c  $(addsuffix .cpp, $(addprefix $(SRC_DIR), $(addprefix $(2)/, $(1))))
-endef
-
-define compilef_test
-	g++ $(CPPFLAGS) -Isrc -o $(addsuffix .o, $(addprefix $(BUILD_DIR), $(1))) -c  $(addsuffix .cpp, $(addprefix $(TEST_DIR), $(addprefix $(2)/, $(1))))
-endef
-
 ##################### HEXIBIT APP ###################################################
-#Linking
-$(BIN_DIR)hexibit: $(BUILD_DIR)ByteOrder.o $(BUILD_DIR)ListPrinter.o $(BUILD_DIR)Interpretation.o $(BUILD_DIR)Interpreter.o \
-$(BUILD_DIR)Config.o $(BUILD_DIR)FileReader.o $(BUILD_DIR)HexStringReader.o $(BUILD_DIR)hexibit_main.o
-	g++ $(BUILD_DIR)ByteOrder.o $(BUILD_DIR)ListPrinter.o $(BUILD_DIR)Interpretation.o $(BUILD_DIR)Interpreter.o \
-  $(BUILD_DIR)Config.o $(BUILD_DIR)FileReader.o $(BUILD_DIR)HexStringReader.o $(BUILD_DIR)hexibit_main.o -o $(BIN_DIR)hexibit
+src = $(wildcard src/*.cpp) \
+      $(wildcard src/*/*.cpp)
 
-#Compiling
-$(BUILD_DIR)hexibit_main.o: $(SRC_DIR)hexibit_main.cpp
-	$(call compilef, hexibit_main)
+obj = $(src:$(SRC_DIR)%.cpp=$(BUILD_DIR)%.o)
 
-$(BUILD_DIR)Config.o: $(call depends_on, config/Config)
-	$(call compilef, Config, config)
+build_dirs = $(sort $(dir $(obj)))
 
-$(BUILD_DIR)HexStringReader.o: $(call depends_on, data/HexStringReader)
-	$(call compilef, HexStringReader, data)
+$(build_dirs): 
+	mkdir -p $(build_dirs)
 
-$(BUILD_DIR)FileReader.o: $(call depends_on, data/FileReader)
-	$(call compilef, FileReader, data)
+$(obj): $(BUILD_DIR)%.o : $(SRC_DIR)%.cpp $(build_dirs)
+	$(CXX) $(CPPFLAGS) -Isrc -c $< -o $@
 
-$(BUILD_DIR)ByteOrder.o: $(call depends_on, parse/ByteOrder)
-	$(call compilef, ByteOrder, parse)
-
-$(BUILD_DIR)Interpretation.o: $(call depends_on, parse/Interpretation)
-	$(call compilef, Interpretation, parse)
-
-$(BUILD_DIR)Interpreter.o: $(call depends_on, parse/Interpreter)
-	$(call compilef, Interpreter, parse)
-
-$(BUILD_DIR)ListPrinter.o: $(call depends_on, print/ListPrinter)
-	$(call compilef, ListPrinter, print)
-
-##################### VWAP TESTS ###################################################
-#Linking
-$(BIN_DIR)hexibit_tests: $(BUILD_DIR)HexStringReader_test.o $(BUILD_DIR)test_main.o
-ifeq ($(UNIT_TESTS), yes)
-	g++ $(BUILD_DIR)HexStringReader.o $(BUILD_DIR)HexStringReader_test.o $(BUILD_DIR)test_main.o -o $(BIN_DIR)hexibit_tests
-endif
-
-#Compiling
-$(BUILD_DIR)test_main.o: $(TEST_DIR)test_main.cpp 
-ifeq ($(UNIT_TESTS), yes)
-	$(call compilef_test, test_main)
-endif
-
-$(BUILD_DIR)HexStringReader_test.o: $(TEST_DIR)HexStringReader_test.cpp
-ifeq ($(UNIT_TESTS), yes)
-	$(call compilef_test, HexStringReader_test)
-endif
+$(BIN_DIR)hexibit: $(obj)
+	$(CXX) -o $@ $^ $(CPPFLAGS)
