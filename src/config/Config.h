@@ -35,7 +35,6 @@ public: //---------------- Public interface -------------------
   size_t                        offset_;              // If input is a file, this is the offset at which the interpretation begins. 0 by default.
 
   // Translation options
-  size_t                        padding_;             // How the data is padded (must be a power of 2) 0 means tightly packed. Tightly packed by default.
   ByteOrder::Enum               byte_order_;          // Endianness, big endian by default
   std::vector<Interpretation>   interpretations_;     // Vector of interpretations, determining how the input data should be interpreted
   // If empty, all compatible interpretations are tested on the first bytes of the data

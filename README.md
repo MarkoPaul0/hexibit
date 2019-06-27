@@ -57,7 +57,7 @@ Where:
 ### File Reader Mode
 Thie mode allows you to interpret data from a binary file.
 ```bash
-hexibit -f  <filepath> [-i <interpretation,...> -p <padding> -b <byte_order> -o <offset> -n <num_bytes>]
+hexibit -f  <filepath> [-i <interpretation,...> -p <padding> -b <byte_order> -o <offset>]
 ```
 Where:
 - `filepath` path of the file which data is to be interpreted.

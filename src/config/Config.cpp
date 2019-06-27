@@ -12,13 +12,12 @@ namespace hx {
 static void printUsage(const char* bin_path) {
   printf("\n");
   printf("Usage:\n");
-  printf("\t%s -s  <hex_string> [-i <interpretation,...> -p <padding> -b <byte_order>]\n", bin_path);
-  printf("\t%s -f  <filepath> [-i <interpretation,...> -p <padding> -b <byte_order> -o <offset>]\n", bin_path);
+  printf("\t%s -s  <hex_string> [-i <interpretation,...> -b <byte_order>]\n", bin_path);
+  printf("\t%s -f  <filepath> [-i <interpretation,...> -b <byte_order> -o <offset>]\n", bin_path);
   printf("\n");
   printf("Where:\n");
   printf("\t<hex_string>     is a hexadecimal string (With or without whitespaces, not case sensitive)\n");
   printf("\t<interpretation> is one of uint[8|16|32|64], int[8|16|32|64], double, ipv4, string, char_array_<length>, bool, skipped_<length> (Not case sensitive)\n");
-  printf("\t<padding>        is one of 0, 2, 4, or 8 (Defaulted to 0)\n");
   printf("\t<byte_order>     is one of LITTLE_ENDIAN, BIG_ENDIAN, LE, or BE. (Not case sensitive, defaulted to BE)\n");
   printf("\t<offset>         is the offset at which the interpretation of the data in the input file starts.\n");
   printf("\n");
@@ -27,7 +26,6 @@ static void printUsage(const char* bin_path) {
   printf("\t-s or --hex-string\n");
   printf("\t-f or --filepath\n");
   printf("\t-i or --interpretations\n");
-  printf("\t-p or --padding\n");
   printf("\t-b or --byte-order\n");
   printf("\t-o or --offset\n");
   printf("\n");
@@ -113,7 +111,6 @@ Config::Config(int argc, char* argv[]) {
     {"hex-string",          required_argument, 0, 's'},
     {"filepath",            required_argument, 0, 'f'},
     {"interpretations",     required_argument, 0, 'i'},
-    {"padding",             required_argument, 0, 'p'},
     {"byte-order",          required_argument, 0, 'b'},
     {"offset",              required_argument, 0, 'o'},
     {"num-bytes",           required_argument, 0, 'n'}
@@ -153,15 +150,6 @@ Config::Config(int argc, char* argv[]) {
     }
     case 'i': {
       if (!cstrToInterpretations(optarg, &interpretations_)) {
-        printUsage(argv[0]);
-        exit(1);
-      }
-      break;
-    }
-    case 'p': {
-      padding_ = cstrToUInt64(optarg);
-      if (padding_ != 0 && padding_ != 2 && padding_ != 4 && padding_ != 8) {
-        _ERROR("'--padding' value must be one of 0, 2, 4, or 8!");
         printUsage(argv[0]);
         exit(1);
       }
@@ -229,10 +217,9 @@ void Config::print() const {
   printf("Configuration: hex-string: %s\n"
          "               filepath: %s\n"
          "               byte-order: %s\n"
-         "               padding: %lu\n"
          "               interpretations: %s\n"
          "               offset: %lu\n",
-         hex_string_.c_str(), filepath_.c_str(), ByteOrder::byteOrderToCstr(byte_order_), padding_, interpretations_str.c_str(), offset_);
+         hex_string_.c_str(), filepath_.c_str(), ByteOrder::byteOrderToCstr(byte_order_), interpretations_str.c_str(), offset_);
   printf("----------------------------------------------------\n\n");
 }
 
