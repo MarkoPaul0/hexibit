@@ -44,14 +44,14 @@ HexStringReader::~HexStringReader() {
 }
 
 
-void HexStringReader::advanceReadPtr(size_t advance_size) {
-//  ASSERT(offset_ + advance_size <= len_);
-  offset_ += advance_size;
+void HexStringReader::advanceReadPtr(size_t num_bytes) {
+  _ASSERT(offset_ + num_bytes <= len_);
+  offset_ += num_bytes;
 }
 
 
 size_t HexStringReader::getRemainingLength() const {
-//  ASSERT(len_ >= offset_);
+  _ASSERT(len_ >= offset_);
   return len_ - offset_;
 }
 

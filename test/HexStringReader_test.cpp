@@ -19,74 +19,73 @@ TEST_CASE("HexStringReader advanceReadPtr()", "[HexStringReader]") {
         REQUIRE(hsr.getRemainingLength() == 5);
         REQUIRE(hsr.getReadPtr(1) == read_ptr + 10);
     }
-}
-
-/*
-TEST_CASE("HexStringReader advanceWritePtr()", "[HexStringReader]") {
-    hx::HexStringReader bb;
-    const char* const write_ptr = bb.getWritePtr(0);
-
-    SECTION("Normal case") {
-        bb.advanceWritePtr(10);
-        bb.advanceReadPtr(7);
-        REQUIRE(bb.readableSize() == 3);
-    }
 
     SECTION("Edge case 0") {
-        bb.advanceWritePtr(10);
-        bb.advanceReadPtr(0);
-        REQUIRE(bb.readableSize() == 10);
+        hsr.advanceReadPtr(0);
+        REQUIRE(hsr.getRemainingLength() == 15);
+        REQUIRE(hsr.getReadPtr(1) == read_ptr);
     }
 
     SECTION("Edge case 1") {
-        bb.advanceWritePtr(10);
-        bb.advanceReadPtr(1);
-        REQUIRE(bb.readableSize() == 9);
+        hsr.advanceReadPtr(1);
+        REQUIRE(hsr.getRemainingLength() == 14);
+        REQUIRE(hsr.getReadPtr(1) == read_ptr + 1);
     }
 
-
-    SECTION("Edge case write ptr - 1") {
-        bb.advanceWritePtr(10);
-        bb.advanceReadPtr(9);
-        REQUIRE(bb.readableSize() == 1);
+    SECTION("Edge case size - 1") {
+        hsr.advanceReadPtr(14);
+        REQUIRE(hsr.getRemainingLength() == 1);
+        REQUIRE(hsr.getReadPtr(1) == read_ptr + 14);
     }
 
-    SECTION("Edge case write ptr") {
-        bb.advanceWritePtr(10);
-        bb.advanceReadPtr(10);
-        REQUIRE(bb.readableSize() == 0);
-    }
-
-    SECTION("Edge case, past write ptr") {
-        bb.advanceWritePtr(10);
-        REQUIRE_THROWS(bb.advanceReadPtr(11));
-    }
-
-
-    SECTION("Proper reset when read pointer advanced to write ptr") {
-        bb.advanceWritePtr(10);
-        REQUIRE(bb.writableSize() == hx::HexStringReader::MAX_SIZE - 10);
-        bb.advanceReadPtr(10);
-        REQUIRE(bb.readableSize() == 0);
-        REQUIRE(bb.writableSize() == hx::HexStringReader::MAX_SIZE);
-        REQUIRE(bb.getWritePtr(1) == write_ptr);
+    SECTION("Edge case size") {
+        hsr.advanceReadPtr(15);
+        REQUIRE(hsr.getRemainingLength() == 0);
     }
 }
 
-TEST_CASE("HexStringReader getWritePtr", "[HexStringReader]") {
-    hx::HexStringReader bb;
-    const char* start_ptr = bb.getReadPtr();;
-    bb.advanceWritePtr(10);
+
+TEST_CASE("HexStringReader getReadPtr()", "[HexStringReader]") {
+    hx::HexStringReader hsr("010203040506");
+    const char* const read_ptr = hsr.getReadPtr(6);
+    REQUIRE(hsr.getRemainingLength() == 6);
 
     SECTION("Normal case") {
-        REQUIRE(start_ptr + 10 == bb.getWritePtr(0));
-        REQUIRE(start_ptr + 10 == bb.getWritePtr(1));
-        REQUIRE(start_ptr + 10 == bb.getWritePtr(9));
-        REQUIRE(bb.getWritePtr(0) == bb.getWritePtr(hx::HexStringReader::MAX_SIZE - 10));
+        const char* read_ptr= hsr.getReadPtr(4);
+        REQUIRE(read_ptr[0] == 0x01);
+        REQUIRE(read_ptr[1] == 0x02);
+        REQUIRE(read_ptr[2] == 0x03);
+        REQUIRE(read_ptr[3] == 0x04);
     }
 
-    SECTION("Needing space than available") {
-        REQUIRE_THROWS(bb.getWritePtr(hx::HexStringReader::MAX_SIZE - 9));
+    SECTION("Edge case 1") {
+        const char* read_ptr= hsr.getReadPtr(1);
+        REQUIRE(read_ptr[0] == 0x01);
+    }
+
+    SECTION("Normal case len - 1") {
+        const char* read_ptr= hsr.getReadPtr(5);
+        REQUIRE(read_ptr[0] == 0x01);
+        REQUIRE(read_ptr[1] == 0x02);
+        REQUIRE(read_ptr[2] == 0x03);
+        REQUIRE(read_ptr[3] == 0x04);
+        REQUIRE(read_ptr[4] == 0x05);
+    }
+
+    SECTION("Normal case len") {
+        const char* read_ptr= hsr.getReadPtr(6);
+        REQUIRE(read_ptr[0] == 0x01);
+        REQUIRE(read_ptr[1] == 0x02);
+        REQUIRE(read_ptr[2] == 0x03);
+        REQUIRE(read_ptr[3] == 0x04);
+        REQUIRE(read_ptr[4] == 0x05);
+        REQUIRE(read_ptr[5] == 0x06);
+    }
+
+    SECTION("Normal case end") {
+        hsr.advanceReadPtr(4);
+        const char* read_ptr= hsr.getReadPtr(2);
+        REQUIRE(read_ptr[0] == 0x05);
+        REQUIRE(read_ptr[1] == 0x06);
     }
 }
-*/
