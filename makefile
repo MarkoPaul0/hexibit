@@ -38,24 +38,24 @@ obj = $(src:$(SRC_DIR)%.cpp=$(BUILD_DIR)%.o)
 
 build_dirs = $(sort $(dir $(obj)))
 
-$(build_dirs): 
+$(build_dirs):
 	mkdir -p $(build_dirs)
 
-$(obj): $(BUILD_DIR)%.o : $(SRC_DIR)%.cpp $(build_dirs)
-	$(CXX) $(CPPFLAGS) -Isrc -c $< -o $@
+$(BUILD_DIR)%.o: src/%.cpp
+	$(CXX) -c $(CPPFLAGS) -Isrc -o $@ $<
 
 $(BIN_DIR)hexibit: $(obj)
-	$(CXX) -o $@ $^ $(CPPFLAGS)
+	$(CXX) $(obj) -o $@ 
 
 ##################### UNIT TESTS ###################################################
 test_src = $(wildcard test/*.cpp)
 
 test_obj = $(test_src:test/%.cpp=build/%.o)
 
-$(test_obj): $(BUILD_DIR)%.o : test/%.cpp 
-	$(CXX) $(CPPFLAGS) -Isrc -c $< -o $@
-
 no_main_obj = $(filter-out %main.o,$(obj))
 
-$(BIN_DIR)hexibit_tests: $(test_obj) $(no_main_obj)
-	$(CXX) -o $@ $^ $(CPPFLAGS)
+$(BUILD_DIR)%.o: test/%.cpp
+	$(CXX) -c $(CPPFLAGS) -Isrc -o $@ $<
+
+$(BIN_DIR)hexibit_tests: $(no_main_obj) $(test_obj)
+	$(CXX) $(no_main_obj) $(test_obj) -o $@ 
