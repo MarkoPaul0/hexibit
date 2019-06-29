@@ -47,7 +47,6 @@ TEST_CASE("HexStringReader advanceReadPtr()", "[HexStringReader]") {
 
 TEST_CASE("HexStringReader getReadPtr()", "[HexStringReader]") {
     hx::HexStringReader hsr("010203040506");
-    const char* const read_ptr = hsr.getReadPtr(6);
     REQUIRE(hsr.getRemainingLength() == 6);
 
     SECTION("Normal case") {
