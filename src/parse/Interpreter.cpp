@@ -1,5 +1,6 @@
 #include "parse/Interpreter.h"
 
+#include <arpa/inet.h>
 #include <cstddef>
 
 #include "MainUtils.h"
