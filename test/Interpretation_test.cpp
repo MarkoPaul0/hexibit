@@ -109,3 +109,50 @@ TEST_CASE("Interpretation parsing", "[Interpretation]" ){
     REQUIRE(itp.size_ == 52);
   }
 }
+
+
+TEST_CASE("Interpretation to String", "[Interpretation]") {
+  hx::Interpretation itp;
+  itp.type_ = hx::Interpretation::UINT8;
+  REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "UINT8");
+
+  itp.type_ = hx::Interpretation::UINT16;
+  REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "UINT16");
+
+  itp.type_ = hx::Interpretation::UINT32;
+  REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "UINT32");
+
+  itp.type_ = hx::Interpretation::UINT64;
+  REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "UINT64");
+
+  itp.type_ = hx::Interpretation::INT8;
+  REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "INT8");
+
+  itp.type_ = hx::Interpretation::INT16;
+  REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "INT16");
+
+  itp.type_ = hx::Interpretation::INT32;
+  REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "INT32");
+
+  itp.type_ = hx::Interpretation::INT64;
+  REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "INT64");
+
+  itp.type_ = hx::Interpretation::DOUBLE;
+  REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "DOUBLE");
+
+  itp.type_ = hx::Interpretation::BOOL;
+  REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "BOOL");
+
+  itp.type_ = hx::Interpretation::IPV4;
+  REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "IPV4");
+
+  itp.type_ = hx::Interpretation::STRING;
+  REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "STRING");
+
+  itp.type_ = hx::Interpretation::CHAR_ARRAY;
+  REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "CHAR_ARRAY");
+
+  itp.type_ = hx::Interpretation::SKIPPED;
+  REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "SKIPPED");
+}
+
