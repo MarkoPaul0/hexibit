@@ -40,7 +40,7 @@ FileReader::FileReader(const std::string& filepath, size_t initial_offset) : fil
 FileReader::~FileReader() {
   if (file_) {
     if (fclose(file_) != 0)
-      _DEATH("Error while closing file!", errno);
+      _DEATH("Error while closing file!");
   }
 
   if (current_data_)
