@@ -1,5 +1,7 @@
 #include "parse/Interpreter.h"
 
+#include <cstddef>
+
 #include "MainUtils.h"
 
 namespace hx {
