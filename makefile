@@ -1,5 +1,5 @@
 CPPFLAGS=-std=c++11 -Wall -Wswitch -Wconversion -Wsign-compare -Wreorder -Wold-style-cast -Werror \
--Wundef -Wuninitialized -Wparentheses  -Wpointer-arith -Wunused -Wimplicit -Wformat -Wreturn-type
+-Wundef -Wuninitialized -Wparentheses  -Wpointer-arith -Wunused -Wformat -Wreturn-type
 
 RM=rm -f
 SRC_DIR=src/
