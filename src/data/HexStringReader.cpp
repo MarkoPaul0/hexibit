@@ -26,9 +26,10 @@ static const char* hexStringToData(const std::string& hex_str) {
   for (size_t i = 0; i < len; ++i) {
     const int high_half = parseHexCharacter(*p_in);
     const int low_half = parseHexCharacter(*(p_in + 1));
-    p_in += 2;
     *p_out = static_cast<char>(high_half*16 + low_half);
-    ++p_out;
+    // 2 hex characters = 1 byte of data
+    p_in += 2;
+    p_out++;
   }
 
   return data;
@@ -57,7 +58,9 @@ size_t HexStringReader::getRemainingLength() const {
 
 
 const char* HexStringReader::getReadPtr(size_t num_bytes) {
-  //TODO: add check to verify that data_ + offset_ + num_bytes < len_
+  if (num_bytes > getRemainingLength())
+    _DEATH("Trying to read bytes beyond data size!");
+
   return data_ + offset_;
 }
 

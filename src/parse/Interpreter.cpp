@@ -10,20 +10,20 @@ namespace hx {
 bool isByteOrderSwappingNeeded(ByteOrder::Enum target_order) {
   union {
     uint16_t  value_;   // 16 bit unsigned integer
-    char      mem_[2];  // underlying memory
+    char      mem_[2];  // Underlying memory
   } uint16;
 
   uint16.value_ = 0x0102;
-  const bool is_host_big_endian = (uint16.mem_[0] == 0x01);
+
+  const bool is_host_big_endian         = (uint16.mem_[0] == 0x01);
   const bool is_target_order_big_endian = (target_order == ByteOrder::Enum::BE);
 
   return (is_host_big_endian != is_target_order_big_endian);
 }
 
 
-//TODO: refactor
 uint64_t swapByteOrder64(uint64_t input) {
-  uint64_t swapped;
+  uint64_t swapped = 0;
   uint8_t* data = reinterpret_cast<uint8_t*>(&swapped);
 
   data[0] = static_cast<uint8_t>(input >> 56);
@@ -43,7 +43,7 @@ static std::string dataToHexString(const char* data, size_t num_bytes) {
   const size_t str_len = 2*num_bytes;
   char* str_buf = new char[str_len];
   for(size_t i = 0; i < num_bytes; ++i)
-    sprintf(&str_buf[2*i], "%02X ", static_cast<uint8_t>(data[i]));
+    sprintf(&str_buf[2*i], "%02X", static_cast<uint8_t>(data[i]));
 
   std::string str(str_buf, str_len);
   return str;
@@ -121,6 +121,7 @@ static std::string dataToIPV4String(const char* data, bool swap_byte_order) {
     uint32_t ip_as_uint_;
     uint8_t  octets_[4];
   } ip;
+
   ip.ip_as_uint_ = *reinterpret_cast<const uint32_t*>(data);
 
   if (swap_byte_order)
@@ -130,7 +131,6 @@ static std::string dataToIPV4String(const char* data, bool swap_byte_order) {
   const int len = snprintf(ip_cstr, sizeof(ip_cstr), "%u.%u.%u.%u", ip.octets_[3], ip.octets_[2], ip.octets_[1], ip.octets_[0]);
   if (len < 7 || len > 15) // shortest ip is 0.0.0.0 longest is 255.255.255.255
     _DEATH("Error while stringifying integer ipv4!");
-
 
   return std::string(ip_cstr);
 }
@@ -145,8 +145,9 @@ void Interpreter::performInterpretation(IConsolePrinter* printer) {
   printer->startPrint();
 
   for (hx::Interpretation itp: *interpretations_) {
-    if (data_reader_->getRemainingLength() < itp.size_) {
-      break; // TODO add log if remaining length is not 0
+    if (data_reader_->getRemainingLength() < itp.size_ || data_reader_->getRemainingLength() == 0) {
+      _DEBUG("There is not enough data left to interpret");
+      break;
     }
     switch (itp.type_) {
       case hx::Interpretation::UINT8: {

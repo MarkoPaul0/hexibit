@@ -6,19 +6,19 @@ namespace hx {
 
 struct Interpretation {
   enum Type {
-    UINT8 = 0,
-    UINT16,
-    UINT32,
-    UINT64,
-    INT8,
-    INT16,
-    INT32,
-    INT64,
-    DOUBLE,
-    BOOL,
-    IPV4,
-    CHAR_ARRAY, // Can be provided with a length, e.g. "CHAR_ARRAY_3" for 3 characters, wihtout length it is treated as a null terminated char array
-    SKIPPED     // Used to skip data between 2 interpretations. Must be provided with a length
+    UINT8       = 0,
+    UINT16      = 1,
+    UINT32      = 2,
+    UINT64      = 3,
+    INT8        = 4,
+    INT16       = 5,
+    INT32       = 6,
+    INT64       = 7,
+    DOUBLE      = 8,
+    BOOL        = 9,
+    IPV4        = 10,
+    CHAR_ARRAY  = 11, // Can be provided with a length, e.g. "CHAR_ARRAY_3" for 3 characters, without length it is treated as a null terminated char array
+    SKIPPED     = 12  // Used to skip data between 2 interpretations. Must be provided with a length
 
     // TODO: Any other interesting types?
   };
@@ -30,7 +30,7 @@ struct Interpretation {
   // Constructor
   Interpretation();
 
-  // Convert a string into an Interpretatation. Return true if the conversion was a success, false otherwise.
+  // Convert a string into an Interpretation. Return true if the conversion was a success, false otherwise.
   static bool strToInterpretation(const std::string& interpretation_str, Interpretation* interpretation_out);
 
   // Convert an interpretation into a c string

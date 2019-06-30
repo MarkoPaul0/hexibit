@@ -28,20 +28,20 @@ Interpretation::Interpretation() : type_(UINT8), size_(0) {
 
 const char* Interpretation::interpretationToCstr(Interpretation itp) {
   switch (itp.type_) {
-    case Interpretation::UINT8:     return "UINT8";
-    case Interpretation::UINT16:    return "UINT16";
-    case Interpretation::UINT32:    return "UINT32";
-    case Interpretation::UINT64:    return "UINT64";
-    case Interpretation::INT8:      return "INT8";
-    case Interpretation::INT16:     return "INT16";
-    case Interpretation::INT32:     return "INT32";
-    case Interpretation::INT64:     return "INT64";
-    case Interpretation::DOUBLE:    return "DOUBLE";
-    case Interpretation::BOOL:      return "BOOL";
-    case Interpretation::IPV4:      return "IPV4";
-    case Interpretation::SKIPPED:    return "SKIPPED";
-    case Interpretation::CHAR_ARRAY: return "CHAR_ARRAY";
-    default:                        _DEATH("Unknown intepretation"); //Add %d
+    case Interpretation::UINT8:       return "UINT8";
+    case Interpretation::UINT16:      return "UINT16";
+    case Interpretation::UINT32:      return "UINT32";
+    case Interpretation::UINT64:      return "UINT64";
+    case Interpretation::INT8:        return "INT8";
+    case Interpretation::INT16:       return "INT16";
+    case Interpretation::INT32:       return "INT32";
+    case Interpretation::INT64:       return "INT64";
+    case Interpretation::DOUBLE:      return "DOUBLE";
+    case Interpretation::BOOL:        return "BOOL";
+    case Interpretation::IPV4:        return "IPV4";
+    case Interpretation::SKIPPED:     return "SKIPPED";
+    case Interpretation::CHAR_ARRAY:  return "CHAR_ARRAY";
+    default:                          _DEATH("Unknown intepretation"); //Add %d
   }
 }
 
@@ -79,15 +79,15 @@ bool Interpretation::strToInterpretation(const std::string& interpretation_str, 
   } else if (interpretation_str == "BOOL") {
     interpretation_out->type_ = Interpretation::BOOL;
     interpretation_out->size_ = sizeof(bool);
-  } else if (interpretation_str.size() >= CHAR_ARRAY_OFFSET && interpretation_str.substr(0,CHAR_ARRAY_OFFSET) == "CHAR_ARRAY") {
+  } else if (interpretation_str.size() >= CHAR_ARRAY_OFFSET && interpretation_str.substr(0, CHAR_ARRAY_OFFSET) == "CHAR_ARRAY") {
     interpretation_out->type_ = Interpretation::CHAR_ARRAY;
     interpretation_out->size_ = 0;
-    if (interpretation_str.size() > CHAR_ARRAY_OFFSET) {
+    if (interpretation_str.size() > CHAR_ARRAY_OFFSET) { // Was provided with a length, e.g. "CHAR_ARRAY_14"
       interpretation_out->size_ = parseInterpretationLength(interpretation_str, CHAR_ARRAY_OFFSET + 1);
       if (interpretation_out->size_ <= 0)
         _DEATH("Interpretation '%s' cannot have a length of 0", interpretation_str.c_str());
     }
-  } else if (interpretation_str.size() > SKIPPED_OFFSET && interpretation_str.substr(0,SKIPPED_OFFSET) == "SKIPPED_") {
+  } else if (interpretation_str.size() > SKIPPED_OFFSET && interpretation_str.substr(0, SKIPPED_OFFSET) == "SKIPPED_") {
     interpretation_out->type_ = Interpretation::SKIPPED;
     interpretation_out->size_ = parseInterpretationLength(interpretation_str, SKIPPED_OFFSET);
     if (interpretation_out->size_ <= 0)

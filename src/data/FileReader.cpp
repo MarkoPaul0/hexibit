@@ -48,11 +48,9 @@ FileReader::~FileReader() {
 }
 
 
-void FileReader::advanceReadPtr(size_t advance_size) {
-  if (advance_size > LONG_MAX)
-    _DEATH("The current version of hexibit cannot handle large offsets");
-//  ASSERT(offset_ + advance_size <= len_);
-  if (fseek(file_, static_cast<long>(advance_size), SEEK_CUR) != 0)
+void FileReader::advanceReadPtr(size_t num_bytes) {
+  _ASSERT(num_bytes <= LONG_MAX); // Does not handle large files
+  if (fseek(file_, static_cast<long>(num_bytes), SEEK_CUR) != 0)
     _DEATH("Could not advance file position (errno: %d)", errno);
 }
 
@@ -68,20 +66,22 @@ size_t FileReader::getRemainingLength() const {
 
 
 const char* FileReader::getReadPtr(size_t num_bytes) {
+  if (num_bytes > getRemainingLength())
+    _DEATH("Trying to read bytes beyond file size!");
+
   if (num_bytes > current_data_capacity_) {
     current_data_ = static_cast<char*>(realloc(current_data_, num_bytes));
     if (!current_data_)
       _DEATH("realloc() failed!");
   }
 
-  size_t read_len = fread(current_data_, sizeof(char), num_bytes, file_);
-  if (read_len < num_bytes)
-    _DEATH("TODO: handle this case properly");
+  const size_t read_len = fread(current_data_, sizeof(char), num_bytes, file_);
+  if (read_len != num_bytes)
+    _DEATH("Error reading data!");
 
   //TODO: improve that to avoid repetitive reads
   if (fseek(file_, static_cast<long>(-read_len), SEEK_CUR) != 0)
     _DEATH("Could not reset file position (errno: %d)", errno);
-
 
   return current_data_;
 }
