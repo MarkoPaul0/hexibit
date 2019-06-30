@@ -37,32 +37,30 @@ FFF2                             INT16                -14
 
 * Clone or download the repo
 
-* make the repo
+* Make the repo
 
-* use the binary produced in the `bin/` directory
+* Use the binary produced in the `bin/` directory
 
 ## Synopsis
 
 ### Hexadecimal Reader Mode
 This mode allows you to interpret data from a hexadecimal string.
 ```bash
-hexibit -s  <hex_string> [-i <interpretation,...> -p <padding> -b <byte_order>]
+hexibit -s  <hex_string> -i <interpretation,...> [-b <byte_order>]
 ```
 Where:
 - `hex_string` is a hexadecimal string (With or without whitespaces, not case sensitive).
-- `interpretation` is one of uint[8|16|32|64], int[8|16|32|64], double, ipv4, string, char_array_<length>, bool, skipped_<length> (Not case sensitive).
-- `padding` is one of 0, 2, 4, or 8 (Defaulted to 0).
+- `interpretation` is one of uint[8|16|32|64], int[8|16|32|64], double, ipv4, char_array[_\<length\>], bool, skipped_<length> (Not case sensitive).
 - `byte_order` is one of LITTLE_ENDIAN, BIG_ENDIAN, LE, or BE. (Not case sensitive, defaulted to BE).
 
 ### File Reader Mode
 Thie mode allows you to interpret data from a binary file.
 ```bash
-hexibit -f  <filepath> [-i <interpretation,...> -p <padding> -b <byte_order> -o <offset>]
+hexibit -f  <filepath> -i <interpretation,...> [-b <byte_order> -o <offset>]
 ```
 Where:
 - `filepath` path of the file which data is to be interpreted.
-- `interpretation` is one of uint[8|16|32|64], int[8|16|32|64], double, ipv4, string, char_array_<length>, bool, skipped_<length> (Not case sensitive).
-- `padding` is one of 0, 2, 4, or 8 (Defaulted to 0).
+- `interpretation` is one of uint[8|16|32|64], int[8|16|32|64], double, ipv4, char_array[_\<length\>], bool, skipped_<length> (Not case sensitive).
 - `byte_order` is one of LITTLE_ENDIAN, BIG_ENDIAN, LE, or BE. (Not case sensitive, defaulted to BE).
 - `offset` is the offset at which the data interpretation starts in the input file.
 
@@ -90,8 +88,8 @@ The length of the interpretation can be an input passed to the interpretation
   In the example above, the first byte is interpreted as a uint8, the following 42 bytes are skipped, and the 43rd one is interpreted as a bool.
   
 * **CHAR_ARRAY[_\<length\>]**: for this interpretation, the length parameter is optional. 
-  * If \<length\> is not specified, the sequence of bytes is treated as a null terminated array. 
-  * If \<length\> is specified, then <length> bytes are interpreted as characters.
+  * If `<length>` is not specified, the sequence of bytes is treated as a null terminated array. 
+  * If `<length>` is specified, then <length> bytes are interpreted as characters.
 
 ## Extending this project
 *Hexibit* has been designed so that 2 core aspects can easily be extended:
