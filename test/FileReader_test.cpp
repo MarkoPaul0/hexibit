@@ -1,4 +1,7 @@
 #include "catch.hpp"
+
+#include <cstring>
+
 #include "data/FileReader.h"
 #include "MainUtils.h"
 
