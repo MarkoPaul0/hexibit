@@ -3,6 +3,7 @@
 ![Author](https://img.shields.io/badge/author-MarkoPaul0-red.svg?style=flat-square)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 ![GitHub last commit](https://img.shields.io/github/last-commit/MarkoPaul0/hexibit.svg?style=flat-square&maxAge=300)
+[![Build Status](https://travis-ci.com/MarkoPaul0/hexibit.svg?token=1Gt7pCYg2Usf4VX2axE1&branch=master)](https://travis-ci.com/MarkoPaul0/hexibit)
 ![Stars](https://img.shields.io/github/stars/MarkoPaul0/hexibit.svg?style=social)
 
 
