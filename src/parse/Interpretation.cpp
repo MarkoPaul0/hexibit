@@ -7,7 +7,7 @@
 
 namespace hx {
 
-static constexpr size_t CHAR_ARRAY_OFFSET = 11;
+static constexpr size_t CHAR_ARRAY_OFFSET = 10;
 static constexpr size_t SKIPPED_OFFSET    = 8;
 
 static size_t parseInterpretationLength(const std::string& interpretation_str, size_t offset) {
@@ -38,7 +38,6 @@ const char* Interpretation::interpretationToCstr(Interpretation itp) {
     case Interpretation::INT64:     return "INT64";
     case Interpretation::DOUBLE:    return "DOUBLE";
     case Interpretation::BOOL:      return "BOOL";
-    case Interpretation::STRING:    return "STRING";
     case Interpretation::IPV4:      return "IPV4";
     case Interpretation::SKIPPED:    return "SKIPPED";
     case Interpretation::CHAR_ARRAY: return "CHAR_ARRAY";
@@ -80,14 +79,14 @@ bool Interpretation::strToInterpretation(const std::string& interpretation_str, 
   } else if (interpretation_str == "BOOL") {
     interpretation_out->type_ = Interpretation::BOOL;
     interpretation_out->size_ = sizeof(bool);
-  } else if (interpretation_str == "STRING") {
-    interpretation_out->type_ = Interpretation::STRING;
-    interpretation_out->size_ = 0; // The string is null terminated
-  } else if (interpretation_str.size() > CHAR_ARRAY_OFFSET && interpretation_str.substr(0,CHAR_ARRAY_OFFSET) == "CHAR_ARRAY_") {
+  } else if (interpretation_str.size() >= CHAR_ARRAY_OFFSET && interpretation_str.substr(0,CHAR_ARRAY_OFFSET) == "CHAR_ARRAY") {
     interpretation_out->type_ = Interpretation::CHAR_ARRAY;
-    interpretation_out->size_ = parseInterpretationLength(interpretation_str, CHAR_ARRAY_OFFSET);
-    if (interpretation_out->size_ <= 0)
-      _DEATH("Interpretation '%s' cannot have a length of 0", interpretation_str.c_str());
+    interpretation_out->size_ = 0;
+    if (interpretation_str.size() > CHAR_ARRAY_OFFSET) {
+      interpretation_out->size_ = parseInterpretationLength(interpretation_str, CHAR_ARRAY_OFFSET + 1);
+      if (interpretation_out->size_ <= 0)
+        _DEATH("Interpretation '%s' cannot have a length of 0", interpretation_str.c_str());
+    }
   } else if (interpretation_str.size() > SKIPPED_OFFSET && interpretation_str.substr(0,SKIPPED_OFFSET) == "SKIPPED_") {
     interpretation_out->type_ = Interpretation::SKIPPED;
     interpretation_out->size_ = parseInterpretationLength(interpretation_str, SKIPPED_OFFSET);

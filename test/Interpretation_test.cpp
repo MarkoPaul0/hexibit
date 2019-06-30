@@ -81,19 +81,11 @@ TEST_CASE("Interpretation parsing", "[Interpretation]" ){
     REQUIRE(itp.size_ == 4);
   }
 
-  SECTION("Parsing string") {
-    hx::Interpretation itp;
-    REQUIRE(hx::Interpretation::strToInterpretation("STRING", &itp) == true);
-    REQUIRE(itp.type_ == hx::Interpretation::STRING);
-    REQUIRE(itp.size_ == 0);
-  }
-
   SECTION("Parsing null terminated char_array") {
-    //TODO:
-    //hx::Interpretation itp;
-    //REQUIRE(hx::Interpretation::strToInterpretation("CHAR_ARRAY", &itp) == true);
-    //REQUIRE(itp.type_ == hx::Interpretation::CHAR_ARRAY);
-    //REQUIRE(itp.size_ == 0);
+    hx::Interpretation itp;
+    REQUIRE(hx::Interpretation::strToInterpretation("CHAR_ARRAY", &itp) == true);
+    REQUIRE(itp.type_ == hx::Interpretation::CHAR_ARRAY);
+    REQUIRE(itp.size_ == 0);
   }
 
   SECTION("Parsing lengthed char_array") {
@@ -146,9 +138,6 @@ TEST_CASE("Interpretation to String", "[Interpretation]") {
 
   itp.type_ = hx::Interpretation::IPV4;
   REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "IPV4");
-
-  itp.type_ = hx::Interpretation::STRING;
-  REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "STRING");
 
   itp.type_ = hx::Interpretation::CHAR_ARRAY;
   REQUIRE(std::string(hx::Interpretation::interpretationToCstr(itp)) == "CHAR_ARRAY");

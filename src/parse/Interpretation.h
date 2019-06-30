@@ -17,9 +17,7 @@ struct Interpretation {
     DOUBLE,
     BOOL,
     IPV4,
-    //TODO: merge string and char_array
-    STRING,     // Null terminated
-    CHAR_ARRAY, // Must be provided with a length, e.g. "CHAR_ARRAY_3" for 3 characters
+    CHAR_ARRAY, // Can be provided with a length, e.g. "CHAR_ARRAY_3" for 3 characters, wihtout length it is treated as a null terminated char array
     SKIPPED     // Used to skip data between 2 interpretations. Must be provided with a length
 
     // TODO: Any other interesting types?

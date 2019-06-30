@@ -200,25 +200,25 @@ void Interpreter::performInterpretation(IConsolePrinter* printer) {
         printer->printInterpretation(dataToHexString(data, itp.size_), itp, val_str);
         break;
       }
-      case hx::Interpretation::STRING: {
-        std::string str;
-        std::vector<char> data_copy;
-        while (data_reader_->getRemainingLength()) {
-          const char c = *data_reader_->getReadPtr(/*num_bytes*/1);
-          str += c;
-          data_copy.push_back(c);
-          data_reader_->advanceReadPtr(1);
-          if (c == '\0')
-            break;
-        }
-        itp.size_ = str.size();
-        printer->printInterpretation(dataToHexString(data_copy.data(), itp.size_), itp, str);
-        break;
-      }
       case hx::Interpretation::CHAR_ARRAY: {
-        const char* data = data_reader_->getReadPtr(itp.size_);
-        const std::string str(data, itp.size_);
-        printer->printInterpretation(dataToHexString(data, itp.size_), itp, str);
+        if (itp.size_ == 0) {
+          std::string str;
+          std::vector<char> data_copy;
+          while (data_reader_->getRemainingLength()) {
+            const char c = *data_reader_->getReadPtr(/*num_bytes*/1);
+            str += c;
+            data_copy.push_back(c);
+            data_reader_->advanceReadPtr(1);
+            if (c == '\0')
+              break;
+          }
+          itp.size_ = str.size();
+          printer->printInterpretation(dataToHexString(data_copy.data(), itp.size_), itp, str);
+        } else {
+          const char* data = data_reader_->getReadPtr(itp.size_);
+          const std::string str(data, itp.size_);
+          printer->printInterpretation(dataToHexString(data, itp.size_), itp, str);
+        }
         break;
       }
       case hx::Interpretation::IPV4: {
