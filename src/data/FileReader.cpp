@@ -56,7 +56,6 @@ void FileReader::advanceReadPtr(size_t num_bytes) {
 
 
 size_t FileReader::getRemainingLength() const {
-//  ASSERT(len_ >= offset_);
   const long cur_offset = ftell(file_);
   if (cur_offset < 0)
     _DEATH("ftell() failed (errno: %d)", errno);
