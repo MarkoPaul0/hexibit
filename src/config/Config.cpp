@@ -141,7 +141,8 @@ Config::Config(int argc, char* argv[]) {
     }
     case 's': {  // Hexadecimal string
       hex_string_ = cleanHexString(optarg);
-      //TODO: validate that this is a proper hexa string
+      if (hex_string_.find_first_not_of("0123456789abcdefABCFDEF") != std::string::npos)
+        _DEATH("Invalid hexadecimal string '%s'", optarg);
       break;
     }
     case 'f': {  // Filepath
@@ -213,6 +214,7 @@ void Config::print() const {
     }
   }
 
+#ifdef DBG
   printf("----------------------------------------------------\n");
   printf("Configuration: hex-string: %s\n"
          "               filepath: %s\n"
@@ -221,6 +223,8 @@ void Config::print() const {
          "               offset: %lu\n",
          hex_string_.c_str(), filepath_.c_str(), ByteOrder::byteOrderToCstr(byte_order_), interpretations_str.c_str(), offset_);
   printf("----------------------------------------------------\n\n");
+#endif
+
 }
 
 } //namespace scx
