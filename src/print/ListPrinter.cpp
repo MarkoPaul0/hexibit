@@ -7,7 +7,7 @@ static constexpr char PRINT_FORMAT[18] = "%-32s  %-20s  %s\n";
 
 void ListPrinter::startPrint() {
   printf(PRINT_FORMAT, "Data", "Interpretation", "Value");
-  printf("-----------------------------------------------------------\n");
+  printf("-----------------------------------------------------------------------\n");
 }
 
 
