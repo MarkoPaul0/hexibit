@@ -95,7 +95,7 @@ The length of the interpretation can be an input passed to the interpretation
 ## Extending this project
 *Hexibit* has been designed so that 2 core aspects can easily be extended:
 1) Extending what type of data can be read by implementing the `IDataReader` interface. As of now, *hexibit* can read data from a hexadecimal string, or a file. One could imagine reading data from some other type of resources such as a network resource.
-2) Extending how the interpretation is outputed by implementing the `IConsolePrinter` interface. As of now, there is only one type of printer which simply prints interpretations in the form of a list. You can created any other implementation you like to print the interpretations any way you want.
+2) Extending how the interpretation is outputed by implementing the `IConsolePrinter` interface. As of now, there is only one type of printer which simply prints interpretations in the form of a list. You can create any other implementation you like to print the interpretations any way you want.
 
 ## Licensing
 This project is licensed under [GPLv3](LICENSE).
