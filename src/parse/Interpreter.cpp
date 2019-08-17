@@ -46,6 +46,7 @@ static std::string dataToHexString(const char* data, size_t num_bytes) {
     sprintf(&str_buf[2*i], "%02X", static_cast<uint8_t>(data[i]));
 
   std::string str(str_buf, str_len);
+  delete [] str_buf;
   return str;
 }
 
