@@ -41,7 +41,7 @@ build_dirs = $(sort $(dir $(obj)))
 $(build_dirs):
 	mkdir -p $(build_dirs)
 
-$(BUILD_DIR)%.o: src/%.cpp
+$(BUILD_DIR)%.o: src/%.cpp src/%.h
 	$(CXX) -c $(CPPFLAGS) -Isrc -o $@ $<
 
 $(BIN_DIR)hexibit: $(obj)
