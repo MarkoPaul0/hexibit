@@ -32,10 +32,10 @@ public: //---------------- Public interface -------------------
   std::string                   filepath_;            // Path to a file containing the data to interpret
 
   // Offset when looking at a file (only used if the input if a file)
-  size_t                        offset_;              // If input is a file, this is the offset at which the interpretation begins. 0 by default.
+  size_t                        offset_  = 0;              // If input is a file, this is the offset at which the interpretation begins. 0 by default.
 
   // Translation options
-  ByteOrder::Enum               byte_order_;          // Endianness, big endian by default
+  ByteOrder::Enum               byte_order_ = ByteOrder::Enum::BE;          // Endianness, big endian by default
   std::vector<Interpretation>   interpretations_;     // Vector of interpretations, determining how the input data should be interpreted
   // If empty, all compatible interpretations are tested on the first bytes of the data
 };
